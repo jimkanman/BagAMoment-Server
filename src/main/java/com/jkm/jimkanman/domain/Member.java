@@ -17,8 +17,9 @@ public class Member extends BaseEntity {
     private Long id;
 
     private String password;
+    private String loginId; // 로그인용 id
     private String nickname; // 닉네임
-    private String username; // 사용자명
+    private String username; // 이름
     private String email;
     private String phoneNumber;
 
