@@ -22,7 +22,7 @@ public class Member extends BaseEntity {
     private String email;
     private String phoneNumber;
 
-    @ElementCollection(fetch = FetchType.EAGER) // TODO what the fuck?
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles; // 권한 리스트
 
     @Enumerated(value = EnumType.STRING)
