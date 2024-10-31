@@ -8,22 +8,31 @@ public class MemberResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class fullMemberDto {
-        private String id;
+    public static class FullMemberDto {
+        private Long id;
+        private String loginId;
         private String nickname;
         private String username;
         private String email;
         private String phoneNumber;
 
-        fullMemberDto(Member member){
-
+        public FullMemberDto(Member member){
+            id = member.getId();
+            loginId = member.getLoginId();
+            nickname = member.getNickname();
+            email = member.getEmail();
+            phoneNumber = member.getPhoneNumber();
         }
     }
 
-    public static class simpleMemberDto {
+    public static class SimpleMemberDto {
         private String nickname;
         private String username;
     }
 
+    public static class TokenDto {
+        private Long id;
+        private String loginToken;
+    }
 
 }

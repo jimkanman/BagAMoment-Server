@@ -14,7 +14,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
 
     @Override
-    public MemberResponse.fullMemberDto saveMember(MemberRequest.SignupDto signupDto) {
+    public MemberResponse.FullMemberDto saveMember(MemberRequest.SignupDto signupDto) {
         if(existsById(signupDto.getId())) throw new RuntimeException("이미 존재하는 아이디입니다.");
         if(existsByNickname(signupDto.getNickname())) throw new RuntimeException("이미 존재하는 닉네임입니다.");
 
@@ -29,31 +29,38 @@ public class MemberServiceImpl implements MemberService {
                 .email(signupDto.getEmail())
                 .build();
 
-        return null;
+        return new MemberResponse.FullMemberDto(
+                memberRepository.save(newMember)
+        );
     }
 
     @Override
-    public MemberResponse.fullMemberDto findById(String memberId) {
-        return null;
+    public MemberResponse.FullMemberDto findById(String memberId) {
+        return new MemberResponse.FullMemberDto(
+                memberRepository.findById(Long.getLong(memberId)).orElseThrow()
+        );
     }
 
     @Override
     public Boolean existsById(String memberId) {
-        return null;
+        return memberRepository.existsById(Long.getLong(memberId));
     }
 
     @Override
     public Boolean existsByNickname(String nickname) {
+        return memberRepository.existsByNickname(nickname);
+    }
+
+    @Override
+    public MemberResponse.FullMemberDto updateById(String memberId, MemberRequest.UpdateDto updateDto) {
         return null;
     }
 
     @Override
-    public MemberResponse.fullMemberDto updateById(String memberId, MemberRequest.UpdateDto updateDto) {
-        return null;
-    }
-
-    @Override
-    public MemberResponse.fullMemberDto deleteById(String memberId) {
-        return null;
+    public MemberResponse.FullMemberDto deleteById(String memberId) {
+        Long id = Long.getLong(memberId);
+        Member target = memberRepository.findById(id).orElseThrow();
+        memberRepository.deleteById(id);
+        return new MemberResponse.FullMemberDto(target);
     }
 }
