@@ -12,9 +12,13 @@ public interface MemberService {
 
     Boolean existsById(String memberId);
 
+    Boolean existsByLoginId(String loginId);
+
     Boolean existsByNickname(String nickname);
 
     MemberResponse.FullMemberDto updateById(String memberId, MemberRequest.UpdateDto updateDto);
 
     MemberResponse.FullMemberDto deleteById(String memberId);
+
+    Object checkDuplicate(MemberRequest.DuplicateCheckDto duplicateCheckDto);
 }

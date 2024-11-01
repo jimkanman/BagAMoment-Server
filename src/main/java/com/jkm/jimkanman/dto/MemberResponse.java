@@ -35,4 +35,9 @@ public class MemberResponse {
         private String loginToken;
     }
 
+    public static class DuplicateStatusDto {
+        private Boolean id;
+        private Boolean nickname;
+    }
+
 }

@@ -6,7 +6,12 @@ import com.jkm.jimkanman.dto.MemberRequest;
 import com.jkm.jimkanman.dto.MemberResponse;
 import com.jkm.jimkanman.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -43,7 +48,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Boolean existsById(String memberId) {
+        if(StringUtils.isNumeric(memberId)) throw new RuntimeException("id 형식이 잘못되었습니다.");
         return memberRepository.existsById(Long.getLong(memberId));
+    }
+
+    @Override
+    public Boolean existsByLoginId(String loginId) {
+        if(Strings.isBlank(loginId)) throw new RuntimeException("id가 비어있습니다.");
+        return memberRepository.existsByLoginId(loginId);
     }
 
     @Override
@@ -62,5 +74,13 @@ public class MemberServiceImpl implements MemberService {
         Member target = memberRepository.findById(id).orElseThrow();
         memberRepository.deleteById(id);
         return new MemberResponse.FullMemberDto(target);
+    }
+
+    @Override
+    public Map<String, Boolean> checkDuplicate(MemberRequest.DuplicateCheckDto checkDto) {
+        Map<String ,Boolean> duplicateStatus = new HashMap<>();
+        if(!Strings.isBlank(checkDto.getLoginId())) duplicateStatus.put("id", existsById(checkDto.getLoginId()));
+        if(!Strings.isBlank(checkDto.getNickName())) duplicateStatus.put("nickname", existsByNickname(checkDto.getNickName()));
+        return duplicateStatus;
     }
 }

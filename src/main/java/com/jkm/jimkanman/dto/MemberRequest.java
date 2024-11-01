@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 public class MemberRequest {
     @Getter
@@ -47,5 +49,15 @@ public class MemberRequest {
     }
 
     public static class UpdateDto {
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    @NoArgsConstructor
+    public static class DuplicateCheckDto {
+        @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "id는 영문과 숫자만 포함할 수 있습니다.")
+        private String loginId;
+        private String nickName;
     }
 }
