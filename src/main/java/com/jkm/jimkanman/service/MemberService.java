@@ -3,6 +3,7 @@ package com.jkm.jimkanman.service;
 
 import com.jkm.jimkanman.dto.MemberRequest;
 import com.jkm.jimkanman.dto.MemberResponse;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public interface MemberService {
 
@@ -21,4 +22,6 @@ public interface MemberService {
     MemberResponse.FullMemberDto deleteById(String memberId);
 
     Object checkDuplicate(MemberRequest.DuplicateCheckDto duplicateCheckDto);
+
+    MemberResponse.FullMemberDto findByLoginId(String loginId);
 }

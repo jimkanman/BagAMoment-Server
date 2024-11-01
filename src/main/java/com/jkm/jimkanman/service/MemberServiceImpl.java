@@ -8,15 +8,18 @@ import com.jkm.jimkanman.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public MemberResponse.FullMemberDto saveMember(MemberRequest.SignupDto signupDto) {
@@ -25,7 +28,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member newMember = Member.builder()
                 .loginId(signupDto.getId())
-                .password(signupDto.getPassword()) // TODO: pw 암호화
+                .password(passwordEncoder.encode(signupDto.getPassword()))
                 .nickname(signupDto.getNickname())
                 .username(signupDto.getUsername())
                 .phoneNumber(signupDto.getPhoneNumber())
@@ -92,5 +95,12 @@ public class MemberServiceImpl implements MemberService {
         if(!Strings.isBlank(checkDto.getLoginId())) duplicateStatus.put("id", existsById(checkDto.getLoginId()));
         if(!Strings.isBlank(checkDto.getNickName())) duplicateStatus.put("nickname", existsByNickname(checkDto.getNickName()));
         return duplicateStatus;
+    }
+
+    @Override
+    public MemberResponse.FullMemberDto findByLoginId(String loginId) {
+        return new MemberResponse.FullMemberDto(
+                memberRepository.findByLoginId(loginId).orElseThrow(() -> new NoSuchElementException("해당 id의 회원 정보를 찾을 수 없습니다."))
+        );
     }
 }
