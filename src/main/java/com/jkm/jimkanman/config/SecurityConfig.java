@@ -1,4 +1,4 @@
-package com.jkm.jimkanman.security;
+package com.jkm.jimkanman.config;
 
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
