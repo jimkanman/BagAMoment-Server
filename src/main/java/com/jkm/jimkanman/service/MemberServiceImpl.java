@@ -25,7 +25,7 @@ public class MemberServiceImpl implements MemberService {
 
         Member newMember = Member.builder()
                 .loginId(signupDto.getId())
-                .password(signupDto.getPassword())
+                .password(signupDto.getPassword()) // TODO: pw 암호화
                 .nickname(signupDto.getNickname())
                 .username(signupDto.getUsername())
                 .phoneNumber(signupDto.getPhoneNumber())
@@ -42,14 +42,15 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse.FullMemberDto findById(String memberId) {
         return new MemberResponse.FullMemberDto(
-                memberRepository.findById(Long.getLong(memberId)).orElseThrow()
+                memberRepository.findById(Long.parseLong(memberId))
+                        .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."))
         );
     }
 
     @Override
     public Boolean existsById(String memberId) {
-        if(StringUtils.isNumeric(memberId)) throw new RuntimeException("id 형식이 잘못되었습니다.");
-        return memberRepository.existsById(Long.getLong(memberId));
+        if(!StringUtils.isNumeric(memberId)) throw new RuntimeException("id 형식이 잘못되었습니다.");
+        return memberRepository.existsById(Long.parseLong(memberId));
     }
 
     @Override
@@ -65,18 +66,27 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse.FullMemberDto updateById(String memberId, MemberRequest.UpdateDto updateDto) {
-        return null;
+        Long id = Long.parseLong(memberId);
+        Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+
+        // TODO: updateDto로 member의 필드 업데이트 -> 노션 고민사항 확인
+
+        // 추가 필드 업데이트 ...
+
+        return new MemberResponse.FullMemberDto(memberRepository.save(member));
     }
 
     @Override
     public MemberResponse.FullMemberDto deleteById(String memberId) {
-        Long id = Long.getLong(memberId);
+        if(!StringUtils.isNumeric(memberId)) throw new RuntimeException("id 형식이 잘못되었습니다.");
+        Long id = Long.parseLong(memberId);
         Member target = memberRepository.findById(id).orElseThrow();
         memberRepository.deleteById(id);
         return new MemberResponse.FullMemberDto(target);
     }
 
     @Override
+    /* DuplicateCheckDto 필드 중 null이 아닌 것의 중복 여부를 Map에 담아서 반환 */
     public Map<String, Boolean> checkDuplicate(MemberRequest.DuplicateCheckDto checkDto) {
         Map<String ,Boolean> duplicateStatus = new HashMap<>();
         if(!Strings.isBlank(checkDto.getLoginId())) duplicateStatus.put("id", existsById(checkDto.getLoginId()));
