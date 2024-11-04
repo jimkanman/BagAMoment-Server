@@ -20,7 +20,16 @@ public class JwtUtil {
         expiredMs = expire;
     }
 
-    public String issueAccessToken(String id, TokenCategory tokenCatetory) {
+    public TokenCategory getTokenCategory(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", TokenCategory.class);
+    }
+
+    public Long getUserId(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
+    }
+
+    /** Access Token 발급 */
+    public String issueAccessToken(Long id, TokenCategory tokenCatetory) {
         return Jwts.builder()
                 .claim("category", tokenCatetory.name())
                 .claim("id", id)
@@ -28,5 +37,11 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey)
                 .compact();
+    }
+
+    /** Access Token 검증 */
+    public boolean validateToken(String token) {
+        // TODO
+        return false;
     }
 }
