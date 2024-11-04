@@ -1,21 +1,23 @@
 package com.jkm.jimkanman.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jkm.jimkanman.dto.MemberRequest;
 import com.jkm.jimkanman.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -26,47 +28,36 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
+private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtUtil jwtUtil;
+    private final String filterUrl;
+    private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    {
-        setFilterProcessesUrl("/api/users/login");
-    }
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        System.out.println("LoginFilter : attempting authentication");
-
         // 요청에서 id, password 추출
         String id, password;
-        if (request.getHeader("content-type").startsWith("application/json")) {
-            try {
-                // json으로 요청한 경우 파싱해서 꺼낸다
-                BufferedReader br = request.getReader();
-                String jsonString = br.lines().collect(Collectors.joining(System.lineSeparator()));
-                Map<String, String> jsonRequest = objectMapper.readValue(jsonString, Map.class);
-                id = jsonRequest.get("accountId");
-                password = jsonRequest.get("password");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            // form으로 요청한 경우 파라미터에서 꺼낸다
-            id = request.getParameter("accountId");
-            password = request.getParameter("password");
-        }
-        System.out.println("LoginFilter: id : '" + id + "' password : '" + password + "'"); // test
-
-        // 예외 처리 - id나 password가 null인 경우 기각
-        if (StringUtils.isBlank(id) || StringUtils.isBlank(password)) {
-            throw new AuthenticationException("invalid authentication") {};
+        try {
+            // json으로 요청한 경우 파싱해서 꺼낸다
+            String jsonString = request.getReader()
+                    .lines()
+                    .collect(Collectors.joining(System.lineSeparator()));
+            MemberRequest.LoginDto loginDto = objectMapper.readValue(jsonString, MemberRequest.LoginDto.class);
+            id = loginDto.getId();;
+            password = loginDto.getPassword();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
+        System.out.println("LoginFilter: login attempt with id : '" + id + "' password : '" + password + "'"); // test
         // 스프링 시큐리티에서 username과 password를 검증하기 위해서 token에 담아야 함
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(id, password);
         // token 검증을 위해 AuthenticationManager에 전달
-        return authenticationManager.authenticate(authToken);
+        return authenticationManagerBuilder.getObject().authenticate(authToken);
     }
 
     /**

@@ -34,12 +34,14 @@ public class MemberController {
     @Operation(summary = "회원가입", description = "새로운 사용자를 회원으로 등록함")
     @PostMapping("/signup")
     public Object signup(@Valid @RequestBody  MemberRequest.SignupDto signupDto){
+        System.out.println("MemberController: /signup request " + signupDto);
         return new ResponseEntity<>(memberService.saveMember(signupDto), HttpStatus.OK);
     }
 
     @Operation(summary = "회원 조회", description = "해당 ID를 가진 사용자의 정보를 조회함")
     @GetMapping("/users/{id}")
     public Object getMember(@PathVariable("id") String memberId){
+        System.out.println("MemberController: /users/" + memberId);
         return new ResponseEntity<>(memberService.findById(memberId), HttpStatus.OK);
     }
 
@@ -52,6 +54,7 @@ public class MemberController {
     @Operation(summary = "회원 삭제", description = "해당 ID를 가진 사용자를 삭제함 (회원탈퇴)")
     @DeleteMapping("/users/{id}")
     public Object removeUser(@Valid @PathVariable("id") String memberId){
+        // TODO 권한 확인
         return new ResponseEntity<>(memberService.deleteById(memberId), HttpStatus.OK);
     }
 

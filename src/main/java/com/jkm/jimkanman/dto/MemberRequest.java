@@ -4,17 +4,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 public class MemberRequest {
     @Getter
     @AllArgsConstructor
+    @ToString
     public static class SignupDto {
         @NotBlank
-        @Size(max = 15, message = "ID는 15자 이내여야 합니다.")
+        @Size(max = 20, message = "ID는 15자 이내여야 합니다.")
         @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "id는 영문과 숫자만 포함할 수 있습니다.")
         private String id;
 
@@ -28,15 +26,18 @@ public class MemberRequest {
         private String username;
 
         @NotBlank
-        @Pattern(regexp = "^[\\\\w\\\\.-]+@[\\\\w\\\\.-]+\\\\.[a-zA-Z]{2,}$",
+        @Pattern(regexp = "^\\w+@\\w+.[a-zA-Z]{2,}$",
                  message = "유효한 이메일 주소를 입력하세요.")
         private String email;
 
+        @Pattern(regexp = "^([0-9]{3}-[0-9]{4}-[0-9]{4})|$",
+                 message = "잘못된 전화번호 형식입니다.")
         private String phoneNumber;
     }
 
     @Getter
     @AllArgsConstructor
+    @NoArgsConstructor
     public static class LoginDto {
         @NotBlank
         @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "id는 영문과 숫자만 포함할 수 있습니다.")

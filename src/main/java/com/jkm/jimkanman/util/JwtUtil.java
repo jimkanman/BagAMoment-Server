@@ -17,15 +17,16 @@ public class JwtUtil {
     JwtUtil(@Value("${jwt.secret.key}") final String secret,
             @Value("${jwt.access.expire}") final long expire){
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
-        expiredMs = expire;
+        expiredMs = expire * 1000;
     }
 
     public TokenCategory getTokenCategory(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", TokenCategory.class);
+        String tokenCategory = Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
+        return TokenCategory.valueOf(tokenCategory);
     }
 
     public Long getUserId(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userId", Long.class);
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("id", Long.class);
     }
 
     /** Access Token 발급 */

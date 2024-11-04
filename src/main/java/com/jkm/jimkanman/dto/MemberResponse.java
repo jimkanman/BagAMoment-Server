@@ -20,6 +20,7 @@ public class MemberResponse {
             id = member.getId();
             loginId = member.getLoginId();
             nickname = member.getNickname();
+            username = member.getUsername();
             email = member.getEmail();
             phoneNumber = member.getPhoneNumber();
         }
