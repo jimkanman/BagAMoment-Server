@@ -79,7 +79,7 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          source: "*.java"
+          source: .
           target: "/home/ubuntu/project-code"
 
       # EC2에서 JAR 실행
