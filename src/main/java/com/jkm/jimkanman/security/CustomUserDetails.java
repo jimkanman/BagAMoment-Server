@@ -15,9 +15,11 @@ public class CustomUserDetails implements UserDetails {
     private final Member member;
 
 
-    public Member getMember(){return member;}
+    public Member getMember(){ return member; }
 
-    public String getLoginId(){return member.getLoginId();}
+    public String getLoginId(){ return member.getLoginId(); }
+
+    public Long getId() { return member.getId(); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

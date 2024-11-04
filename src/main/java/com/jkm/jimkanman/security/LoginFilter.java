@@ -70,7 +70,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     /**
-     * 로그인 성공 시 Response Body에 jwt 발급
+     * 로그인 성공 시 Response Body에 jwt 발급 (Long id, TokenCategory 담음)
      */
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
@@ -78,17 +78,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         if(!customUserDetails.isEnabled()){
             try {
+                // TODO: json 형식으로 ApiResponse 반환 (writeOutput() 등 만들어서)
                 response.setStatus(HttpStatus.FORBIDDEN.value());
                 response.getWriter().println("Account is locked");
             } catch (IOException e){
                 throw new RuntimeException(e);
             }
         }
-        String id = authentication.getName();
+        Long id = customUserDetails.getId();
         List<GrantedAuthority> authorities = new ArrayList<>(authentication.getAuthorities());
 
         // test
-        System.out.print("LoginFilter: Hello, " + id + " with role [ ");
+        System.out.print("LoginFilter: Hello, " + authentication.getName() + " with role [ ");
         for (GrantedAuthority auth : authorities) {
             System.out.print(auth.getAuthority() + " ");
         }
