@@ -76,17 +76,17 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          source: "*.jar"
+          source: "build/libs/*.jar"
           target: "/home/ubuntu/app"
 
       # SCP로 프로젝트 코드 EC2에 붙여넣기
       - name: SCP project source code to EC2
-        uses: applebody/scp-action@master
+        uses: appleboy/scp-action@master
         with:
           key: ${{ secrets.EC2_KEY }}
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          source: "!*.jar"
+          source: "src/"
           target: "/home/ubuntu/app"
 
       # EC2에서 JAR 실행
