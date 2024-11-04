@@ -72,6 +72,16 @@ jobs:
           source: "*.jar"
           target: "/home/ubuntu/app"
 
+      # SCP로 소스코드 EC2에 복사 (디버그용)
+      - name: SCP source code to EC2
+        uses: appleboy/scp-action@master
+        with:
+          key: ${{ secrets.EC2_KEY }}
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          source: "*.java"
+          target: "/home/ubuntu/project-code"
+
       # EC2에서 JAR 실행
       - name: Deploy SSH
         uses: appleboy/ssh-action@master
