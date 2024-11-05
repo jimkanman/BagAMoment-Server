@@ -11,6 +11,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "storage")
 @Builder
 public class Storage extends BaseEntity {
     @Id

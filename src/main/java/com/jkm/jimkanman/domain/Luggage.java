@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "luggage")
 @Builder
 public class Luggage extends BaseEntity {
     @Id
