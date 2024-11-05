@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "storage_image")
 @Getter
 public class StorageImage extends BaseEntity {
     @Id

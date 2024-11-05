@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "delivery_reservation")
 @Builder
 public class DeliveryReservation extends BaseEntity {
     @Id

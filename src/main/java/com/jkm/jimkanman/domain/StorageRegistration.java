@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "storage_registration")
 @Builder
 public class StorageRegistration extends BaseEntity {
     @Id
