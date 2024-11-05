@@ -46,5 +46,5 @@ public class Storage extends BaseEntity {
 
     // 옵션 (Enum 타입)
     @Enumerated(EnumType.STRING)
-    private StorageOption option;
+    private StorageOption storageOption;
 }
