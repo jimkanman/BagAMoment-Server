@@ -1,7 +1,6 @@
 package com.jkm.jimkanman.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -14,7 +13,7 @@ public class MemberRequest {
         @NotBlank
         @Size(max = 20, message = "ID는 15자 이내여야 합니다.")
         @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "id는 영문과 숫자만 포함할 수 있습니다.")
-        private String id;
+        private String loginId;
 
         @NotBlank
         @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$",
@@ -41,7 +40,7 @@ public class MemberRequest {
     public static class LoginDto {
         @NotBlank
         @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "id는 영문과 숫자만 포함할 수 있습니다.")
-        private String id;
+        private String loginId;
 
         @NotBlank
         @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).*$",
