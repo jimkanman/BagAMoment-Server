@@ -23,11 +23,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse.FullMemberDto saveMember(MemberRequest.SignupDto signupDto) {
-        if(existsByLoginId(signupDto.getId())) throw new RuntimeException("이미 존재하는 아이디입니다.");
+        if(existsByLoginId(signupDto.getLoginId())) throw new RuntimeException("이미 존재하는 아이디입니다.");
         if(existsByNickname(signupDto.getNickname())) throw new RuntimeException("이미 존재하는 닉네임입니다.");
 
         Member newMember = Member.builder()
-                .loginId(signupDto.getId())
+                .loginId(signupDto.getLoginId())
                 .password(passwordEncoder.encode(signupDto.getPassword()))
                 .nickname(signupDto.getNickname())
                 .username(signupDto.getUsername())
