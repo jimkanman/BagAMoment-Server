@@ -1,5 +1,6 @@
 package com.jkm.jimkanman.domain;
 
+import com.jkm.jimkanman.converter.StorageOptionConverter;
 import com.jkm.jimkanman.domain.enums.StorageOption;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,7 +45,7 @@ public class Storage extends BaseEntity {
     @OneToMany(mappedBy = "storage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StorageImage> storageImages = new ArrayList<>();
 
-    // 옵션 (Enum 타입)
-    @Enumerated(EnumType.STRING)
+    // 옵션 (List<StorageOption>을 converter로 String 변환하여 저장)
+    @Convert(converter = StorageOptionConverter.class)
     private StorageOption storageOption;
 }
