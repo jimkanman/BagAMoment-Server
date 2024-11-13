@@ -47,5 +47,5 @@ public class Storage extends BaseEntity {
 
     // 옵션 (List<StorageOption>을 converter로 String 변환하여 저장)
     @Convert(converter = StorageOptionConverter.class)
-    private StorageOption storageOption;
+    private List<StorageOption> storageOption;
 }
