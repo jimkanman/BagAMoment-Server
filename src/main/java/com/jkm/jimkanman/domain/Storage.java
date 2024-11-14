@@ -37,7 +37,9 @@ public class Storage extends BaseEntity {
     // TODO 가격 정책 저장 방식
     private int backpackPricePerHour;
     private int carrierPricePerHour;
-    private int otherPricePerHour;
+    private int miscellaneousItemPricePerHour;
+    
+    // TODO 운영자 필드 추가
 
     // 약관 파일명
     private String termsAndConditions;
