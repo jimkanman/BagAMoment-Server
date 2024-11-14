@@ -35,12 +35,12 @@ public class MemberController {
     @PostMapping("/signup")
     public Object signup(@Valid @RequestBody  MemberRequest.SignupDto signupDto){
         System.out.println("MemberController: /signup request " + signupDto);
-        return new ResponseEntity<>(memberService.saveMember(signupDto), HttpStatus.OK);
+        return new ResponseEntity<>(memberService.save(signupDto), HttpStatus.OK);
     }
 
     @Operation(summary = "회원 조회", description = "해당 ID를 가진 사용자의 정보를 조회함")
     @GetMapping("/users/{id}")
-    public Object getMember(@PathVariable("id") String memberId){
+    public Object getMember(@PathVariable("id") Long memberId){
         System.out.println("MemberController: /users/" + memberId);
         return new ResponseEntity<>(memberService.findById(memberId), HttpStatus.OK);
     }
@@ -67,5 +67,11 @@ public class MemberController {
         return new ResponseEntity<>(memberService.checkDuplicate(duplicateCheckDto), HttpStatus.OK);
     }
 
+    @Operation(summary = "사용자의 예약 정보 확인", description = "해당 id 사용자의 예약 목록을 가져옴")
+    @GetMapping("/users/{userId}/reservations")
+    public Object getUserReservations(){
+        // TODO
+        return null;
+    }
 
 }

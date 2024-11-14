@@ -22,7 +22,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public MemberResponse.FullMemberDto saveMember(MemberRequest.SignupDto signupDto) {
+    public MemberResponse.FullMemberDto save(MemberRequest.SignupDto signupDto) {
         if(existsByLoginId(signupDto.getLoginId())) throw new RuntimeException("이미 존재하는 아이디입니다.");
         if(existsByNickname(signupDto.getNickname())) throw new RuntimeException("이미 존재하는 닉네임입니다.");
 
@@ -43,9 +43,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponse.FullMemberDto findById(String memberId) {
+    public MemberResponse.FullMemberDto findById(Long memberId) {
         return new MemberResponse.FullMemberDto(
-                memberRepository.findById(Long.parseLong(memberId))
+                memberRepository.findById(memberId)
                         .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."))
         );
     }
