@@ -8,7 +8,7 @@ public class MemberResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    public static class FullMemberDto {
+    public static class MemberDto {
         private Long id;
         private String loginId;
         private String nickname;
@@ -16,7 +16,7 @@ public class MemberResponse {
         private String email;
         private String phoneNumber;
 
-        public FullMemberDto(Member member){
+        public MemberDto(Member member){
             id = member.getId();
             loginId = member.getLoginId();
             nickname = member.getNickname();
