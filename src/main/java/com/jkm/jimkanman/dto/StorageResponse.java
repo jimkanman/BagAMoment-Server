@@ -20,6 +20,7 @@ public class StorageResponse {
         private Long id;
 
         private String name;
+        private Long ownerId;
         private String phoneNumber;
         private String description;
         private String notice;
@@ -46,6 +47,7 @@ public class StorageResponse {
         public StorageDto(Storage storage){
             this.id = storage.getId();
             this.name = storage.getName();
+            this.ownerId = storage.getOwner().getId();
             this.phoneNumber = storage.getPhoneNumber();
             this.description = storage.getDescription();
             this.notice = storage.getNotice();

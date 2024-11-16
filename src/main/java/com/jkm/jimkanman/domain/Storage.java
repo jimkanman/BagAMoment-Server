@@ -34,12 +34,13 @@ public class Storage extends BaseEntity {
     private String openingTime; // 시작시간
     private String closingTime; // 종료시간
 
-    // TODO 가격 정책 저장 방식
     private int backpackPricePerHour;
     private int carrierPricePerHour;
     private int miscellaneousItemPricePerHour;
-    
-    // TODO 운영자 필드 추가
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="owner_id")
+    private Member owner;
 
     // 약관 파일명
     private String termsAndConditions;
@@ -50,4 +51,10 @@ public class Storage extends BaseEntity {
     // 옵션 (List<StorageOption>을 converter로 String 변환하여 저장)
     @Convert(converter = StorageOptionConverter.class)
     private List<StorageOption> storageOption;
+
+    public void setOwner(Member owner) {
+        if(this.owner != null) this.owner.getStorages().remove(this);
+        this.owner = owner;
+        owner.getStorages().add(this);
+    }
 }

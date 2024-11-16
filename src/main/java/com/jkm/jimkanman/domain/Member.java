@@ -32,6 +32,9 @@ public class Member extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(15) DEFAULT 'ACTIVE'")
     private MemberStatus status; // 계정 상태
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Storage> storages;
+
     // 소셜 로그인 관련 필드
     private String provider; // 소셜 제공자 (예: google, kakao)
     private String providerId; // 소셜 제공자에서 발급한 사용자 ID

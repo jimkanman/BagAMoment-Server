@@ -86,6 +86,7 @@ public class StorageServiceImpl implements StorageService {
                 .latitude(coordinate.getLatitude())
                 .longitude(coordinate.getLongitude())
                 .build();
+        storage.setOwner(securityUtil.getMember());
 
         // 이미지 파일 저장
         List<StorageImage> images = registerDto.getStorageImages().stream()
