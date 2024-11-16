@@ -21,4 +21,6 @@ public interface StorageService {
     List<ReservationResponse.ReservationDto> findReservationsOnStorage(Long storageId, Long memberId);
 
     ReservationResponse.ReservationDto findReservationById(Long reservationId);
+
+    List<ReservationResponse.ReservationDto> findReservationsByMemberId(Long userId);
 }

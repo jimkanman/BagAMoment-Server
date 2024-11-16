@@ -10,4 +10,6 @@ import java.util.List;
 public interface StorageReservationRepository extends JpaRepository<StorageReservation, Long> {
 
     List<StorageReservation> findByStorageIdAndMemberIdOrderByEndDateTimeAsc(Long storageId, Long memberId);
+
+    List<StorageReservation> findByMemberId(Long memberId);
 }

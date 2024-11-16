@@ -189,7 +189,15 @@ public class StorageServiceImpl implements StorageService {
         return new ReservationResponse.ReservationDto(reservation);
     }
 
-    public boolean isWithinReservationTime(LocalDateTime reservationDateTime, String openingTime, String closingTime) {
+    @Override
+    public List<ReservationResponse.ReservationDto> findReservationsByMemberId(Long userId) {
+        List<StorageReservation> reservations = storageReservationRepository.findByMemberId(userId);
+        return reservations.stream()
+                .map(reservation -> new ReservationResponse.ReservationDto(reservation))
+                .toList();
+    }
+
+    private boolean isWithinReservationTime(LocalDateTime reservationDateTime, String openingTime, String closingTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime reservationTime = reservationDateTime.toLocalTime();
         // 보관소 예약 시간(LocalTime)으로 변환
