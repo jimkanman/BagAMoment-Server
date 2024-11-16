@@ -13,7 +13,7 @@ class GoogleGeocodingClientTest {
     GoogleGeocodingClient client;
 
     @Test
-    void getCoordinates() {
+    void 주소_위도경도_검증() {
         List<Coordinate> coordinates = new ArrayList<>();
         String[] addresses = new String[]{"흑석로 84", "동작구 흑석로 84", "동작구 흑석로84", "서울시 동작구 흑석로 84", "서울특별시 동작구 흑석로 84"};
 

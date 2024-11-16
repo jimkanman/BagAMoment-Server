@@ -1,11 +1,15 @@
 package com.jkm.jimkanman.dto;
 
 import com.jkm.jimkanman.domain.Storage;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class StorageResponse {
+    @Getter
+    @NoArgsConstructor
     public static class SimpleStorageDto {
         private Long id;
         private String name;
@@ -16,6 +20,8 @@ public class StorageResponse {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
     public static class StorageDto {
         private Long id;
 

@@ -16,7 +16,7 @@ class VWorldClientTest {
     private VWorldClient vWorldClient;
 
     @Test
-    void getCoordinates() {
+    void 주소_의도경도_검증() {
         String address = "%ED%9A%A8%EB%A0%B9%EB%A1%9C72%EA%B8%B8%2060";
         System.out.println("VWorldClientTest: sending api...");
         Long startTime = System.currentTimeMillis();
