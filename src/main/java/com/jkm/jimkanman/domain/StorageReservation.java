@@ -35,9 +35,9 @@ public class StorageReservation extends BaseEntity {
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Luggage> luggageList; // 예약한 짐 목록
 
-    private LocalDateTime startDate; // 예약 시작 일자
-    private LocalDateTime endDate; // 예약 만료 일자
-    private Double paymentAmount; // 결제 금액
+    private LocalDateTime startDateTime; // 예약 시작 일자
+    private LocalDateTime endDateTime; // 예약 만료 일자
+    private Integer paymentAmount; // 결제 금액
 
     @Enumerated(EnumType.STRING)
     private StorageReservationStatus status; // 예약 상태 (승인, 거절, 대기 중)

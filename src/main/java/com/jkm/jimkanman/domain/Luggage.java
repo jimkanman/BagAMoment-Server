@@ -25,7 +25,13 @@ public class Luggage extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LuggageType type; // 짐 종류 (배낭, 캐리어, 비정형 등)
 
-    private Double width; // 부피 - 가로
-    private Double depth; // 부피 - 세로
-    private Double height; // 부피 - 높이
+    private Integer width; // 부피 - 가로
+    private Integer depth; // 부피 - 세로
+    private Integer height; // 부피 - 높이
+
+    public void setReservation(StorageReservation storageReservation) {
+        if(this.reservation != null) this.reservation.getLuggageList().remove(this);
+        this.reservation = storageReservation;
+        storageReservation.getLuggageList().add(this);
+    }
 }

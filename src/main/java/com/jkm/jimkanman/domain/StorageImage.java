@@ -23,4 +23,10 @@ public class StorageImage extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "storage_id")
     private Storage storage; // 보관소와의 관계
+
+    public void setStorage(Storage storage){
+        if(this.storage != null)
+            this.storage.getStorageImages().remove(this);
+        this.storage = storage;
+    }
 }
