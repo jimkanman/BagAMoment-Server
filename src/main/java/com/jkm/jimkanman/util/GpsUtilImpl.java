@@ -1,59 +1,19 @@
 package com.jkm.jimkanman.util;
 
-import com.jkm.jimkanman.domain.Point;
-import org.springframework.beans.factory.annotation.Value;
+import com.jkm.jimkanman.client.geocoding.GeocodingAdapter;
+import com.jkm.jimkanman.domain.Coordinate;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
 @Component
+@RequiredArgsConstructor
 public class GpsUtilImpl implements GpsUtil {
     private static final double EARTH_RADIUS_KM = 6371.0;
-    private final String apiKey;
-    GpsUtilImpl(@Value("${api-keys.vworld}") String apiKey) {
-        this.apiKey = apiKey;
-        System.out.println("GpsUtilImpl initialized with api key " + apiKey );
-    }
+    private final GeocodingAdapter geocodingAdapter;
 
     @Override
-    public Point convertToPoint(String address) {
-
-        // TODO
-        /* Java 코드 사용예제 */
-        String searchType = "parcel";
-        String searchAddr = "삼평동 624";
-        String epsg = "epsg:4326";
-
-        StringBuilder sb = new StringBuilder("https://api.vworld.kr/req/address");
-        sb.append("?service=address");
-        sb.append("&request=getCoord");
-        sb.append("&format=json");
-        sb.append("&crs=" + epsg);
-        sb.append("&key=" + apiKey);
-        sb.append("&type=" + searchType);
-        sb.append("&address=" + URLEncoder.encode(searchAddr, StandardCharsets.UTF_8));
-
-        /*
-        try{
-            URL url = new URL(sb.toString());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-
-            JSONParser jspa = new JSONParser();
-            JSONObject jsob = (JSONObject) jspa.parse(reader);
-            JSONObject jsrs = (JSONObject) jsob.get("response");
-            JSONObject jsResult = (JSONObject) jsrs.get("result");
-            JSONObject jspoitn = (JSONObject) jsResult.get("point");
-
-            System.out.println(jspoitn.get("x"));
-            System.out.println(jspoitn.get("y"));
-        } catch (IOException | ParseException e) {
-            throw new RuntimeException(e);
-        }
-         */
-
-
-        return null;
+    public Coordinate convertToCoordinates(String address) {
+        return geocodingAdapter.getCoordinates(address);
     }
 
 
