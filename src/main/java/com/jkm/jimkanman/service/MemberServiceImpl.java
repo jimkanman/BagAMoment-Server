@@ -22,7 +22,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public MemberResponse.FullMemberDto saveMember(MemberRequest.SignupDto signupDto) {
+    public MemberResponse.MemberDto save(MemberRequest.SignupDto signupDto) {
         if(existsByLoginId(signupDto.getLoginId())) throw new RuntimeException("이미 존재하는 아이디입니다.");
         if(existsByNickname(signupDto.getNickname())) throw new RuntimeException("이미 존재하는 닉네임입니다.");
 
@@ -37,15 +37,15 @@ public class MemberServiceImpl implements MemberService {
                 .email(signupDto.getEmail())
                 .build();
 
-        return new MemberResponse.FullMemberDto(
+        return new MemberResponse.MemberDto(
                 memberRepository.save(newMember)
         );
     }
 
     @Override
-    public MemberResponse.FullMemberDto findById(String memberId) {
-        return new MemberResponse.FullMemberDto(
-                memberRepository.findById(Long.parseLong(memberId))
+    public MemberResponse.MemberDto findById(Long memberId) {
+        return new MemberResponse.MemberDto(
+                memberRepository.findById(memberId)
                         .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."))
         );
     }
@@ -68,7 +68,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponse.FullMemberDto updateById(String memberId, MemberRequest.UpdateDto updateDto) {
+    public MemberResponse.MemberDto updateById(String memberId, MemberRequest.UpdateDto updateDto) {
         Long id = Long.parseLong(memberId);
         Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
 
@@ -76,16 +76,16 @@ public class MemberServiceImpl implements MemberService {
 
         // 추가 필드 업데이트 ...
 
-        return new MemberResponse.FullMemberDto(memberRepository.save(member));
+        return new MemberResponse.MemberDto(memberRepository.save(member));
     }
 
     @Override
-    public MemberResponse.FullMemberDto deleteById(String memberId) {
+    public MemberResponse.MemberDto deleteById(String memberId) {
         if(!StringUtils.isNumeric(memberId)) throw new RuntimeException("id 형식이 잘못되었습니다.");
         Long id = Long.parseLong(memberId);
         Member target = memberRepository.findById(id).orElseThrow();
         memberRepository.deleteById(id);
-        return new MemberResponse.FullMemberDto(target);
+        return new MemberResponse.MemberDto(target);
     }
 
     @Override
@@ -98,8 +98,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponse.FullMemberDto findByLoginId(String loginId) {
-        return new MemberResponse.FullMemberDto(
+    public MemberResponse.MemberDto findByLoginId(String loginId) {
+        return new MemberResponse.MemberDto(
                 memberRepository.findByLoginId(loginId).orElseThrow(() -> new NoSuchElementException("해당 id의 회원 정보를 찾을 수 없습니다."))
         );
     }

@@ -1,5 +1,6 @@
 package com.jkm.jimkanman.domain;
 
+import com.jkm.jimkanman.converter.StorageOptionConverter;
 import com.jkm.jimkanman.domain.enums.StorageOption;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,10 +34,13 @@ public class Storage extends BaseEntity {
     private String openingTime; // 시작시간
     private String closingTime; // 종료시간
 
-    // TODO 가격 정책 저장 방식
     private int backpackPricePerHour;
     private int carrierPricePerHour;
-    private int otherPricePerHour;
+    private int miscellaneousItemPricePerHour;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="owner_id")
+    private Member owner;
 
     // 약관 파일명
     private String termsAndConditions;
@@ -44,7 +48,13 @@ public class Storage extends BaseEntity {
     @OneToMany(mappedBy = "storage", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StorageImage> storageImages = new ArrayList<>();
 
-    // 옵션 (Enum 타입)
-    @Enumerated(EnumType.STRING)
-    private StorageOption storageOption;
+    // 옵션 (List<StorageOption>을 converter로 String 변환하여 저장)
+    @Convert(converter = StorageOptionConverter.class)
+    private List<StorageOption> storageOption;
+
+    public void setOwner(Member owner) {
+        if(this.owner != null) this.owner.getStorages().remove(this);
+        this.owner = owner;
+        owner.getStorages().add(this);
+    }
 }

@@ -1,5 +1,5 @@
 package com.jkm.jimkanman.domain.enums;
 
 public enum LuggageType {
-    BAG, CARRIER, OTHER
+    BAG, CARRIER, MISCELLANEOUS_ITEM
 }
