@@ -4,6 +4,7 @@ import com.jkm.jimkanman.dto.ReservationRequest;
 import com.jkm.jimkanman.dto.ReservationResponse;
 import com.jkm.jimkanman.dto.StorageRequest;
 import com.jkm.jimkanman.dto.StorageResponse;
+import com.jkm.jimkanman.global.success.SuccessResponse;
 import com.jkm.jimkanman.service.StorageService;
 import com.jkm.jimkanman.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +28,7 @@ public class StorageController {
     @PostMapping("/storages")
     public Object saveStorage(@ModelAttribute StorageRequest.StorageRegisterDto registerDto) {
         StorageResponse.StorageDto storageDto = storageService.save(registerDto);
-        return ResponseEntity.ok(storageDto);
+        return SuccessResponse.ok(storageDto);
     }
 
     @Operation(summary = "보관소 예약", description = "입력받은 정보로 보관소를 예약함")
@@ -35,21 +36,21 @@ public class StorageController {
     public Object reserveStorage(@PathVariable("storageId") Long storageId,
                                  @Valid @RequestBody ReservationRequest.ReservationDto reservationDto) {
         ReservationResponse.ReservationResultDto reservationResultDto = storageService.makeReservation(storageId, reservationDto);
-        return ResponseEntity.ok(reservationResultDto);
+        return SuccessResponse.ok(reservationResultDto);
     }
 
     @Operation(summary = "보관소 예약 확인", description = "해당 id의 보관소에 걸린 예약 목록을 가져옴")
     @GetMapping("/storages/{storageId}/reservations")
     public Object getStorageReservations(@PathVariable("storageId") Long storageId) {
         List<ReservationResponse.ReservationDto> reservationDtos = storageService.findReservationsOnStorage(storageId, securityUtil.getMemberId());
-        return ResponseEntity.ok(reservationDtos);
+        return SuccessResponse.ok(reservationDtos);
     }
 
     @Operation(summary = "보관소 상세 정보", description = "해당 id의 보관소의 상세 정보를 가져옴")
     @GetMapping("/storages/{storageId}")
     public Object getStorage(@PathVariable("storageId") String storageId) {
         StorageResponse.StorageDto storageDto = storageService.findById(Long.parseLong(storageId));
-        return ResponseEntity.ok(storageDto);
+        return SuccessResponse.ok(storageDto);
     }
 
     @Operation(summary = "근처 보관소 탐색", description = "탐색 반경 내에 있는 보관소 목록을 가져옴")
@@ -65,7 +66,7 @@ public class StorageController {
         */
         System.out.println("StorageController: findNearbyStorages at " + latitude + ", " + longitude + ", radius = " + radius);
         List<StorageResponse.SimpleStorageDto> nearbyStorages = storageService.findNearbyStorages(latitude, longitude, radius);
-        return ResponseEntity.ok(nearbyStorages);
+        return SuccessResponse.ok(nearbyStorages);
     }
 
     @Operation(summary = "예약 정보 확인", description = "해당 id의 예약 정보를 가져옴")
