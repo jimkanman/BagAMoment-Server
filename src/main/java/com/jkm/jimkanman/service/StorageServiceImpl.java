@@ -7,6 +7,8 @@ import com.jkm.jimkanman.dto.ReservationRequest;
 import com.jkm.jimkanman.dto.ReservationResponse;
 import com.jkm.jimkanman.dto.StorageRequest;
 import com.jkm.jimkanman.dto.StorageResponse;
+import com.jkm.jimkanman.global.error.ErrorCode;
+import com.jkm.jimkanman.global.error.exception.BusinessException;
 import com.jkm.jimkanman.repository.*;
 import com.jkm.jimkanman.util.GpsUtil;
 import com.jkm.jimkanman.util.SecurityUtil;
@@ -63,6 +65,8 @@ public class StorageServiceImpl implements StorageService {
         try {
             coordinate = gpsUtil.convertToCoordinates(registerDto.getDetailedAddress());
         } catch (Exception e){
+            System.out.println("StorageService: exception while converting address to coordinate; " + e.getMessage());
+            System.out.println("StorageService: setting coordinate for storaget '" + registerDto.getRegisterName() +"' to (null, null)");
             coordinate = new Coordinate(null, null);
         }
 
@@ -118,13 +122,13 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public StorageResponse.StorageDto findById(Long storageId) {
         if(storageId == null) throw new RuntimeException("보관소 ID가 필요합니다.");
-        Storage storage = storageRepository.findById(storageId).orElseThrow( () -> new RuntimeException("보관소를 찾을 수 없습니다."));
+        Storage storage = storageRepository.findById(storageId).orElseThrow( () -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
         return new StorageResponse.StorageDto(storage);
     }
 
     @Override
     public ReservationResponse.ReservationResultDto makeReservation(Long storageId, ReservationRequest.ReservationDto reservationDto) {
-        Storage storage = storageRepository.findById(storageId).orElseThrow(() -> new RuntimeException("보관소를 찾을 수 없습니다."));
+        Storage storage = storageRepository.findById(storageId).orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
 
         // 예약 시간 확인
         LocalDateTime startDateTime, endDateTime;

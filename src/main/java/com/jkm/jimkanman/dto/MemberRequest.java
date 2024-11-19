@@ -7,6 +7,7 @@ import lombok.*;
 
 public class MemberRequest {
     @Getter
+    @NoArgsConstructor
     @AllArgsConstructor
     @ToString
     public static class SignupDto {
@@ -24,9 +25,8 @@ public class MemberRequest {
 
         private String username;
 
-        @NotBlank
-        @Pattern(regexp = "^\\w+@\\w+.[a-zA-Z]{2,}$",
-                 message = "유효한 이메일 주소를 입력하세요.")
+        @Pattern(regexp = "^(\\w+@\\w+\\.[a-zA-Z]{2,})?$",
+                message = "유효한 이메일 주소를 입력하세요.")
         private String email;
 
         @Pattern(regexp = "^([0-9]{3}-[0-9]{4}-[0-9]{4})|$",

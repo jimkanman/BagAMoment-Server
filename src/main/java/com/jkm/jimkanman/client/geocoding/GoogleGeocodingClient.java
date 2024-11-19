@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkm.jimkanman.domain.Coordinate;
+import com.jkm.jimkanman.global.error.exception.BusinessException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

@@ -2,12 +2,17 @@ package com.jkm.jimkanman.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkm.jimkanman.dto.MemberRequest;
+import com.jkm.jimkanman.global.error.ErrorCode;
+import com.jkm.jimkanman.global.error.exception.BusinessException;
+import com.jkm.jimkanman.global.success.SuccessCode;
+import com.jkm.jimkanman.global.success.SuccessResponse;
 import com.jkm.jimkanman.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -85,16 +90,10 @@ private final AuthenticationManagerBuilder authenticationManagerBuilder;
         System.out.println("]");
 
         String accessToken = jwtUtil.issueAccessToken(id, TokenCategory.ACCESS);
-
-        try {
-            // body로 jwt 발급
-            PrintWriter writer = response.getWriter();
-            Map<String, String> jwtBody = new HashMap<>();
-            jwtBody.put("authorization", "Bearer " + accessToken);
-            writer.println(objectMapper.writeValueAsString(jwtBody));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        // body로 jwt 발급
+        Map<String, String> jwtBody = new HashMap<>();
+        jwtBody.put("authorization", "Bearer " + accessToken);
+        writeOutput(request, response, SuccessResponse.ok(jwtBody));
     }
 
     /** 로그인 실패 시 401 반환 */
@@ -103,5 +102,17 @@ private final AuthenticationManagerBuilder authenticationManagerBuilder;
         // 로그인 실패
         System.out.println("LoginFilter: Login attempt failed.");
         response.setStatus(401);
+    }
+
+    private void writeOutput(HttpServletRequest request, HttpServletResponse response, ResponseEntity<?> body) {
+        try {
+            response.setStatus(body.getStatusCode().value());
+            response.setHeader("Content-Type", "application/json");
+            response.getOutputStream().write(objectMapper.writeValueAsBytes(body.getBody()));
+        } catch (Exception e) {
+            RuntimeException exception = new RuntimeException(e.getMessage());
+            request.setAttribute("exception", exception);
+            throw exception;
+        }
     }
 }

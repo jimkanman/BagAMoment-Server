@@ -4,6 +4,8 @@ import com.jkm.jimkanman.domain.Member;
 import com.jkm.jimkanman.domain.enums.MemberStatus;
 import com.jkm.jimkanman.dto.MemberRequest;
 import com.jkm.jimkanman.dto.MemberResponse;
+import com.jkm.jimkanman.global.error.ErrorCode;
+import com.jkm.jimkanman.global.error.exception.BusinessException;
 import com.jkm.jimkanman.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -23,8 +25,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse.MemberDto save(MemberRequest.SignupDto signupDto) {
-        if(existsByLoginId(signupDto.getLoginId())) throw new RuntimeException("이미 존재하는 아이디입니다.");
-        if(existsByNickname(signupDto.getNickname())) throw new RuntimeException("이미 존재하는 닉네임입니다.");
+        if(existsByLoginId(signupDto.getLoginId())) throw new BusinessException(ErrorCode.ID_ALREADY_EXISTS);
+        if(existsByNickname(signupDto.getNickname())) throw new BusinessException(ErrorCode.NICKNAME_ALREADY_EXISTS);
 
         Member newMember = Member.builder()
                 .loginId(signupDto.getLoginId())
@@ -46,19 +48,19 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponse.MemberDto findById(Long memberId) {
         return new MemberResponse.MemberDto(
                 memberRepository.findById(memberId)
-                        .orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."))
+                        .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND))
         );
     }
 
     @Override
     public Boolean existsById(String memberId) {
-        if(!StringUtils.isNumeric(memberId)) throw new RuntimeException("id 형식이 잘못되었습니다.");
+        if(!StringUtils.isNumeric(memberId)) throw new BusinessException(ErrorCode.INVALID_ID);
         return memberRepository.existsById(Long.parseLong(memberId));
     }
 
     @Override
     public Boolean existsByLoginId(String loginId) {
-        if(Strings.isBlank(loginId)) throw new RuntimeException("id가 비어있습니다.");
+        if(Strings.isBlank(loginId)) throw new BusinessException(ErrorCode.INVALID_ID);
         return memberRepository.existsByLoginId(loginId);
     }
 
@@ -70,7 +72,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse.MemberDto updateById(String memberId, MemberRequest.UpdateDto updateDto) {
         Long id = Long.parseLong(memberId);
-        Member member = memberRepository.findById(id).orElseThrow(() -> new RuntimeException("회원 정보를 찾을 수 없습니다."));
+        Member member = memberRepository.findById(id).orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         // TODO: updateDto로 member의 필드 업데이트 -> 노션 고민사항 확인
 
@@ -81,7 +83,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberResponse.MemberDto deleteById(String memberId) {
-        if(!StringUtils.isNumeric(memberId)) throw new RuntimeException("id 형식이 잘못되었습니다.");
+        if(!StringUtils.isNumeric(memberId)) throw new BusinessException(ErrorCode.INVALID_ID);
         Long id = Long.parseLong(memberId);
         Member target = memberRepository.findById(id).orElseThrow();
         memberRepository.deleteById(id);
@@ -100,7 +102,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponse.MemberDto findByLoginId(String loginId) {
         return new MemberResponse.MemberDto(
-                memberRepository.findByLoginId(loginId).orElseThrow(() -> new NoSuchElementException("해당 id의 회원 정보를 찾을 수 없습니다."))
+                memberRepository.findByLoginId(loginId)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND))
         );
     }
 }
