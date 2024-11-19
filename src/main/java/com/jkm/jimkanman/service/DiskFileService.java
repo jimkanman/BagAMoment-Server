@@ -11,7 +11,7 @@ import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.UUID;
 
-@Service
+//@Service
 public class DiskFileService implements FileService {
     private final String savePath;
 
@@ -52,14 +52,8 @@ public class DiskFileService implements FileService {
     }
 
     @Override
-    public File getFile(String filename) {
-        // 파일 경로 생성 및 파일 객체 반환
-        File file = new File(savePath + File.separator + filename);
-        if (file.exists() && file.isFile()) {
-            return file;
-        } else {
-            System.out.println("DiskFileService: File not found '" + filename + "'");
-            return null;
-        }
+    public String getFile(String filename) {
+        // 파일 다운로드 경로 반환
+        return savePath + File.separator + filename;
     }
 }

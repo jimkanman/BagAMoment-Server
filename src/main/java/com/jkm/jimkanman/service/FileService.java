@@ -7,5 +7,5 @@ import java.io.File;
 public interface FileService {
     String saveFile(MultipartFile file);
     void deleteFile(String filename);
-    File getFile(String filename);
+    String getFile(String filename);
 }
