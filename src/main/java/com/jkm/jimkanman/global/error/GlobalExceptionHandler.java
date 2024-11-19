@@ -17,11 +17,21 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    /** Valid 처리 중 발생한 예외 핸들링 */
+    /**
+     * Valid 처리 중 발생한 예외 핸들링
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
+    public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
         System.out.println("ExceptionHandler: handling MethodArgumentNotValidException - " + e);
-        final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.BAD_REQUEST);
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getFieldErrors()
+                .forEach(fieldError -> {
+                    errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+                });
+        final ErrorResponse errorBaseResponse = ErrorResponse.of(
+                ErrorCode.BAD_REQUEST,
+                errors
+        );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
     }
 
