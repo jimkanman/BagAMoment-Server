@@ -1,19 +1,25 @@
 package com.jkm.jimkanman.global.error;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+import java.util.Map;
+
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
-public class ErrorResponse {
-    private boolean isSuccess;
-    private int code;
+@JsonPropertyOrder({"isSuccess", "code", "message", "result"})
+public class ErrorResponse<T> {
+    @JsonProperty("isSuccess")
+    private Boolean isSuccess;
+    private Integer code;
     private String message;
-    private String data;
+    private T data;
 
     private ErrorResponse(){}
 
@@ -22,7 +28,16 @@ public class ErrorResponse {
                 .isSuccess(false)
                 .code(errorCode.getHttpStatus().value())
                 .message(errorCode.getMessage())
-                .data("")
+                .data(null)
+                .build();
+    }
+
+    public static <T> ErrorResponse of(ErrorCode errorCode, T data) {
+        return ErrorResponse.builder()
+                .isSuccess(false)
+                .code(errorCode.getHttpStatus().value())
+                .message(errorCode.getMessage())
+                .data(data)
                 .build();
     }
 
@@ -31,7 +46,7 @@ public class ErrorResponse {
                 .isSuccess(false)
                 .code(httpStatus.value())
                 .message(message)
-                .data("")
+                .data(null)
                 .build();
     }
 }

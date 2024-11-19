@@ -1,5 +1,7 @@
 package com.jkm.jimkanman.global.success;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,11 +12,15 @@ import org.springframework.http.ResponseEntity;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @Getter
+@JsonPropertyOrder({"isSuccess", "code", "message", "result"})
 public class SuccessResponse<T> {
-    private boolean isSuccess;
-    private int code;
+    @JsonProperty("isSuccess")
+    private Boolean isSuccess;
+    private Integer code;
     private String message;
     private T data;
+
+    private SuccessResponse(){}
 
     public static <T> ResponseEntity<SuccessResponse<?>> ok(T data) {
         return ResponseEntity
