@@ -1,6 +1,7 @@
 package com.jkm.jimkanman.controller;
 
 import com.jkm.jimkanman.global.error.ErrorResponse;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Hidden // Swagger에 명시 X
 public class CustomErrorController implements ErrorController {
     private final ErrorAttributes errorAttributes;
 
