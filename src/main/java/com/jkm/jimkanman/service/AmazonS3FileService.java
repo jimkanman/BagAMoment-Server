@@ -40,10 +40,10 @@ public class AmazonS3FileService implements FileService{
         String filename;
         try {
             int extIdx = Objects.requireNonNull(file.getOriginalFilename()).lastIndexOf(".");
-            String filenaemWithoutExt = originalFilename.substring(0, extIdx);
+            String filenameWithoutExt = originalFilename.substring(0, extIdx);
             String ext = originalFilename.substring(extIdx);
             String uuid = UUID.randomUUID().toString();
-            filename = filenaemWithoutExt + "_" + uuid + ext;
+            filename = filenameWithoutExt + "_" + uuid + ext;
 
             amazonS3.putObject(bucketName, filename, file.getInputStream(), metadata);
         } catch (IOException e) {
