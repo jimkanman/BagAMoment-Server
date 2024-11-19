@@ -71,7 +71,7 @@ public class StorageServiceImpl implements StorageService {
         }
 
         // 약관 파일 저장
-        String termsAndConditionsFilename = fileService.saveFile(registerDto.getTermsAndConditions());
+        String termsAndConditionsFilePath = fileService.saveFile(registerDto.getTermsAndConditions());
 
         // 보관소 생성
         Storage storage = Storage.builder()
@@ -85,7 +85,7 @@ public class StorageServiceImpl implements StorageService {
                 .backpackPricePerHour(registerDto.getBackpackPricePerHour())
                 .carrierPricePerHour(registerDto.getCarrierPricePerHour())
                 .miscellaneousItemPricePerHour(registerDto.getMiscellaneousItemPricePerHour())
-                .termsAndConditions(termsAndConditionsFilename)
+                .termsAndConditions(termsAndConditionsFilePath)
                 .storageImages(new ArrayList<>())
                 .latitude(coordinate.getLatitude())
                 .longitude(coordinate.getLongitude())
@@ -95,10 +95,10 @@ public class StorageServiceImpl implements StorageService {
         // 이미지 파일 저장
         List<StorageImage> images = registerDto.getStorageImages().stream()
                 .map(file -> {
-                    String filename = fileService.saveFile(file);
+                    String filePath = fileService.saveFile(file);
                     StorageImage storageImage = StorageImage.builder()
                             .originalFileName(file.getOriginalFilename())
-                            .storedFileName(filename)
+                            .storedFileName(filePath)
                             .build();
                     storageImage.setStorage(storage);
                     return storageImage;
