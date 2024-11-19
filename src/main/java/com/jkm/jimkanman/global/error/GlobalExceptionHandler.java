@@ -62,12 +62,18 @@ public class GlobalExceptionHandler {
     /** BusinessException을 handling합니다. */
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
-        System.out.println("ExceptionHandler : BusinessException " + e);
+        System.out.println("ExceptionHandler : handling BusinessException " + e);
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponse errorBaseResponse = ErrorResponse.of(errorCode);
         return ResponseEntity.status(errorCode.getHttpStatus()).body(errorBaseResponse);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    protected ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
+        System.out.println("ExceptionHandler: handling RuntimeException " + e);
+        final ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
 
     /** 나머지 예외 핸드링 */
     @ExceptionHandler(Exception.class)
