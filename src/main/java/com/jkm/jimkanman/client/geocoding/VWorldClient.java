@@ -2,6 +2,8 @@ package com.jkm.jimkanman.client.geocoding;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkm.jimkanman.domain.Coordinate;
+import com.jkm.jimkanman.global.error.ErrorCode;
+import com.jkm.jimkanman.global.error.exception.BusinessException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -48,14 +50,14 @@ public class VWorldClient implements GeocodingAdapter {
                 .bodyToMono(VWorldApiResponse.class)
                 .block();
 
-        if(apiResponse == null )
-            throw new RuntimeException("vWorld 응답이 비었습니다.");
+        if(apiResponse == null)
+            throw new BusinessException(ErrorCode.EXTERNAL_API_UNAVAILABLE);
 
         VWorldResponse response = apiResponse.getResponse();
         if(!"ok".equalsIgnoreCase(response.getStatus())){
             System.out.println("VWorldClient: exception on address '" + address + "'");
             System.out.println("VWorldClient: response = '" + response + "'");
-            throw new RuntimeException(response.getStatus() + ": " + response.getError());
+            throw new BusinessException(ErrorCode.EXTERNAL_API_UNAVAILABLE);
         }
 
         // result를 파싱하여 Coordinate으로 반환

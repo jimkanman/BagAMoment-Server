@@ -1,5 +1,7 @@
 package com.jkm.jimkanman.security;
 
+import com.jkm.jimkanman.global.error.ErrorCode;
+import com.jkm.jimkanman.global.error.exception.BusinessException;
 import com.jkm.jimkanman.repository.MemberRepository;
 import com.jkm.jimkanman.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return new CustomUserDetails(memberRepository.findByLoginId(username)
-                .orElseThrow(() -> new NoSuchElementException("해당 회원 정보를 찾을 수 없습니다")));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND)));
     }
 }
