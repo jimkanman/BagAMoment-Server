@@ -148,18 +148,20 @@ public class StorageServiceImpl implements StorageService {
         endDateTime = LocalDateTime.parse(reservationDto.getEndDateTime());
         if(!isWithinReservationTime(startDateTime, storage.getOpeningTime(), storage.getClosingTime())
             || !isWithinReservationTime(endDateTime, storage.getOpeningTime(), storage.getClosingTime())){
-            throw new RuntimeException("예약시간이 보관소 이용시간과 맞지 않습니다.");
+            throw new BusinessException(ErrorCode.STORAGE_NOT_OPEN);
         }
 
         // 짐 변환 및 가격 계산
+        if(reservationDto.getLuggage() == null) throw new BusinessException(ErrorCode.LUGGAGE_NULL);
         List<Luggage> luggages = reservationDto.getLuggage().stream()
                 .map(luggageDto -> Luggage.builder()
-                            .type(luggageDto.getType())
-                            .depth(luggageDto.getDepth())
-                            .width(luggageDto.getWidth())
-                            .height(luggageDto.getHeight())
-                            .build())
+                        .type(luggageDto.getType())
+                        .depth(luggageDto.getDepth())
+                        .width(luggageDto.getWidth())
+                        .height(luggageDto.getHeight())
+                        .build())
                 .toList();
+
 
         int price = luggages.stream()
                             .map(luggage -> switch (luggage.getType()) {
