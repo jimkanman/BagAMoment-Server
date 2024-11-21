@@ -53,15 +53,18 @@ public class StorageResponse {
             openingTime = storage.getOpeningTime();
             closingTime = storage.getClosingTime();
 
+            if(storage.getStorageImages() != null) {
+                previewImagePath = storage.getStorageImages().stream()
+                        .findFirst()
+                        .map(image -> image.getStoredFileName())
+                        .orElse(JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH); // 이미지 빈 경우 디폴트 썸네일
+            }
 
-            previewImagePath = storage.getStorageImages().stream()
-                    .findFirst()
-                    .map(image -> image.getStoredFileName())
-                    .orElse(JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH); // 이미지 빈 경우 디폴트 썸네일
-
-            storageOptions = storage.getStorageOption().stream()
-                    .map(storageOption -> storageOption.name())
-                    .toList();
+            if(storage.getStorageOption() != null) {
+                storageOptions = storage.getStorageOption().stream()
+                        .map(storageOption -> storageOption.name())
+                        .toList();
+            }
         }
     }
 
@@ -121,15 +124,19 @@ public class StorageResponse {
             this.termsAndConditions = storage.getTermsAndConditions();
 
             // 이미지 파일명 리스트 생성
-            this.images = storage.getStorageImages().stream()
-                    .map(storageImage -> storageImage.getOriginalFileName())
-                    .collect(Collectors.toList());
-            if(this.images.isEmpty()) this.images = List.of(JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH);
+            if(storage.getStorageImages() != null) {
+                this.images = storage.getStorageImages().stream()
+                        .map(storageImage -> storageImage.getOriginalFileName())
+                        .collect(Collectors.toList());
+            }
+            if(this.images == null || this.images.isEmpty()) this.images = List.of(JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH);
 
             // 저장 옵션 Enum을 문자열로 변환하여 리스트 생성
-            this.storageOptions = storage.getStorageOption().stream()
-                    .map(storageOption -> storageOption.name())
-                    .collect(Collectors.toList());
+            if(storage.getStorageOption() != null) {
+                this.storageOptions = storage.getStorageOption().stream()
+                        .map(storageOption -> storageOption.name())
+                        .collect(Collectors.toList());
+            }
         }
     }
 
@@ -193,15 +200,19 @@ public class StorageResponse {
             this.termsAndConditions = storage.getTermsAndConditions();
 
             // 이미지 파일명 리스트 생성
-            this.images = storage.getStorageImages().stream()
-                    .map(storageImage -> storageImage.getOriginalFileName())
-                    .collect(Collectors.toList());
-            if(this.images.isEmpty()) this.images = List.of(JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH);
+            if(storage.getStorageImages() != null) {
+                this.images = storage.getStorageImages().stream()
+                        .map(storageImage -> storageImage.getOriginalFileName())
+                        .collect(Collectors.toList());
+                if (this.images.isEmpty()) this.images = List.of(JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH);
+            }
 
             // 저장 옵션 Enum을 문자열로 변환하여 리스트 생성
+            if(storage.getStorageOption() != null) {
             this.storageOptions = storage.getStorageOption().stream()
                     .map(storageOption -> storageOption.name())
                     .collect(Collectors.toList());
+            }
         }
     }
 }
