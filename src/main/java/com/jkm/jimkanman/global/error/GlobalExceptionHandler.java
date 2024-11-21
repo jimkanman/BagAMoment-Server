@@ -23,6 +23,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException e, WebRequest request) {
         System.out.println("ExceptionHandler: handling MethodArgumentNotValidException - " + e);
+        e.printStackTrace();
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getFieldErrors()
                 .forEach(fieldError -> {
@@ -39,6 +40,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BindException.class)
     protected ResponseEntity<ErrorResponse> handleBindException(BindException e) {
         System.out.println("ExceptionHandler: handling BindException - " + e);
+        e.printStackTrace();
         final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.BAD_REQUEST);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
     }
@@ -47,6 +49,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         System.out.println("ExceptionHandler: handling MethodArgumentTypeMismatchExcepton - " + e);
+        e.printStackTrace();
         final ErrorResponse errorBaseResponse = ErrorResponse.of(HttpStatus.BAD_REQUEST, "Request Parameter 형식이 잘못되었습니다.");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorBaseResponse);
     }
@@ -55,6 +58,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         System.out.println("ExceptionHandler : HttpRequestMethodNotSupportedException - " + e);
+        e.printStackTrace();
         final ErrorResponse errorBaseResponse = ErrorResponse.of(ErrorCode.METHOD_NOT_ALLOWED);
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(errorBaseResponse);
     }
@@ -63,6 +67,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     protected ResponseEntity<ErrorResponse> handleBusinessException(final BusinessException e) {
         System.out.println("ExceptionHandler : handling BusinessException " + e);
+        e.printStackTrace();
         final ErrorCode errorCode = e.getErrorCode();
         final ErrorResponse errorBaseResponse = ErrorResponse.of(errorCode);
         return ResponseEntity.status(errorCode.getHttpStatus()).body(errorBaseResponse);
@@ -71,6 +76,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
         System.out.println("ExceptionHandler: handling RuntimeException " + e);
+        e.printStackTrace();
         final ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
@@ -79,6 +85,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGeneralException(MethodArgumentNotValidException e, WebRequest request) {
         System.out.println("ExceptionHandler: handling exception - " + e);
+        e.printStackTrace();
         final ErrorResponse errorBaseResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorBaseResponse);
     }
