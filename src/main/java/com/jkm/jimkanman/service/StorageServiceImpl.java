@@ -3,10 +3,7 @@ package com.jkm.jimkanman.service;
 import com.jkm.jimkanman.domain.*;
 import com.jkm.jimkanman.domain.enums.StorageRegistrationStatus;
 import com.jkm.jimkanman.domain.enums.StorageReservationStatus;
-import com.jkm.jimkanman.dto.ReservationRequest;
-import com.jkm.jimkanman.dto.ReservationResponse;
-import com.jkm.jimkanman.dto.StorageRequest;
-import com.jkm.jimkanman.dto.StorageResponse;
+import com.jkm.jimkanman.dto.*;
 import com.jkm.jimkanman.global.error.ErrorCode;
 import com.jkm.jimkanman.global.error.exception.BusinessException;
 import com.jkm.jimkanman.repository.*;
@@ -31,6 +28,7 @@ public class StorageServiceImpl implements StorageService {
     private final StorageImageRepository storageImageRepository;
     private final StorageReservationRepository storageReservationRepository;
     private final LuggageRepository luggageRepository;
+    private final MemberRepository memberRepository;
 
     private final GpsUtil gpsUtil;
     private final FileService fileService;
@@ -67,6 +65,7 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    @Transactional
     public StorageResponse.StorageDto save(StorageRequest.StorageRegisterDto registerDto) {
         // 주소에서 위도와 경도를 얻어옴
         Coordinate coordinate;
@@ -74,7 +73,7 @@ public class StorageServiceImpl implements StorageService {
             coordinate = gpsUtil.convertToCoordinates(registerDto.getDetailedAddress());
         } catch (Exception e){
             System.out.println("StorageService: exception while converting address to coordinate; " + e.getMessage());
-            System.out.println("StorageService: setting coordinate for storaget '" + registerDto.getRegisterName() +"' to (null, null)");
+            System.out.println("StorageService: setting coordinate for storage '" + registerDto.getRegisterName() +"' to (null, null)");
             coordinate = new Coordinate(null, null);
         }
 
@@ -98,19 +97,24 @@ public class StorageServiceImpl implements StorageService {
                 .latitude(coordinate.getLatitude())
                 .longitude(coordinate.getLongitude())
                 .build();
-        storage.setOwner(securityUtil.getMember());
+        Member owner = memberRepository.findById(securityUtil.getMemberId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        storage.setOwner(owner);
 
         // 이미지 파일 저장
-        List<StorageImage> images = registerDto.getStorageImages().stream()
-                .map(file -> {
-                    String filePath = fileService.saveFile(file);
-                    StorageImage storageImage = StorageImage.builder()
-                            .originalFileName(file.getOriginalFilename())
-                            .storedFileName(filePath)
-                            .build();
-                    storageImage.setStorage(storage);
-                    return storageImage;
-                }).toList();
+        List<StorageImage> images = new ArrayList<>();
+        if(registerDto.getStorageImages() != null) {
+            images = registerDto.getStorageImages().stream()
+                    .map(file -> {
+                        String filePath = fileService.saveFile(file);
+                        StorageImage storageImage = StorageImage.builder()
+                                .originalFileName(file.getOriginalFilename())
+                                .storedFileName(filePath)
+                                .build();
+                        storageImage.setStorage(storage);
+                        return storageImage;
+                    }).toList();
+        }
 
         // 보관소 예약 생성
         StorageRegistration registration = StorageRegistration.builder()
@@ -173,6 +177,7 @@ public class StorageServiceImpl implements StorageService {
                 .member(securityUtil.getMember())
                 .startDateTime(startDateTime)
                 .endDateTime(endDateTime)
+                .luggageList(new ArrayList<>())
                 .paymentAmount(price)
                 .status(StorageReservationStatus.PENDING) // 예약 상태 대기 중으로 초기화
                 .build();
@@ -180,8 +185,8 @@ public class StorageServiceImpl implements StorageService {
         luggages.forEach(luggage -> luggage.setReservation(reservation));
 
         // 저장
-        luggageRepository.saveAll(luggages);
         StorageReservation savedReservation = storageReservationRepository.save(reservation);
+        luggageRepository.saveAll(luggages);
 
         return new ReservationResponse.ReservationResultDto(savedReservation);
     }
