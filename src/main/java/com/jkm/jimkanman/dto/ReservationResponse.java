@@ -51,10 +51,14 @@ public class ReservationResponse {
 
             storageId = reservation.getId();
             storageName = reservation.getStorage().getName();
-            luggage = reservation.getLuggageList().stream()
-                    .map(luggage -> new ReservationRequest.LuggageDto(luggage))
-                    .toList();
-            delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            delivery = null;
+            if(reservation.getLuggageList() != null) {
+                luggage = reservation.getLuggageList().stream()
+                        .map(luggage -> new ReservationRequest.LuggageDto(luggage))
+                        .toList();
+            }
+
 
             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
             startDateTime = reservation.getStartDateTime().format(formatter);
@@ -89,11 +93,15 @@ public class ReservationResponse {
             id = reservation.getId();
             previewImagePath = JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH;
             storageId = reservation.getId();
+            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            delivery = null;
             storageName = reservation.getStorage().getName();
-            luggage = reservation.getLuggageList().stream()
-                    .map(luggage -> new ReservationRequest.LuggageDto(luggage))
-                    .toList();
-            delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            if(reservation.getLuggageList() != null) {
+                luggage = reservation.getLuggageList().stream()
+                        .map(luggage -> new ReservationRequest.LuggageDto(luggage))
+                        .toList();
+            }
+
 
             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
             startDateTime = reservation.getStartDateTime().format(formatter);
@@ -109,10 +117,13 @@ public class ReservationResponse {
             previewImagePath = imagePath;
             storageId = reservation.getId();
             storageName = reservation.getStorage().getName();
-            luggage = reservation.getLuggageList().stream()
-                    .map(luggage -> new ReservationRequest.LuggageDto(luggage))
-                    .toList();
-            delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            delivery = null;
+            if(reservation.getLuggageList() != null) {
+                luggage = reservation.getLuggageList().stream()
+                        .map(luggage -> new ReservationRequest.LuggageDto(luggage))
+                        .toList();
+            }
 
             DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
             startDateTime = reservation.getStartDateTime().format(formatter);
@@ -123,6 +134,8 @@ public class ReservationResponse {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
     public static class DeliveryReservationDto {
         public DeliveryReservationDto(DeliveryReservation deliveryReservation) {
             if (deliveryReservation == null) return;
