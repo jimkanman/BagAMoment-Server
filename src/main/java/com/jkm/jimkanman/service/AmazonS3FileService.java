@@ -2,9 +2,6 @@ package com.jkm.jimkanman.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.jkm.jimkanman.config.AmazonConfig;
-import com.jkm.jimkanman.global.error.exception.BusinessException;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

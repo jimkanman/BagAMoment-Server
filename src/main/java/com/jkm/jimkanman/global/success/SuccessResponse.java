@@ -22,20 +22,20 @@ public class SuccessResponse<T> {
 
     private SuccessResponse(){}
 
-    public static <T> ResponseEntity<SuccessResponse<?>> ok(T data) {
+    public static <T> ResponseEntity<SuccessResponse<T>> ok(T data) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(SuccessResponse.of(SuccessCode.OK, data));
     }
 
-    public static <T> ResponseEntity<SuccessResponse<?>> created(T data) {
+    public static <T> ResponseEntity<SuccessResponse<T>> created(T data) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(SuccessResponse.of(SuccessCode.CREATED, data));
     }
 
 
-    public static <T> SuccessResponse<?> of(SuccessCode successCode, T data) {
-        return SuccessResponse.builder()
+    public static <T> SuccessResponse<T> of(SuccessCode successCode, T data) {
+        return SuccessResponse.<T>builder()
                 .isSuccess(true)
                 .code(successCode.getHttpStatus().value())
                 .message(successCode.getMessage())

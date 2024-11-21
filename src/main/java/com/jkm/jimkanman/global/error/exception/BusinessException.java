@@ -2,7 +2,6 @@ package com.jkm.jimkanman.global.error.exception;
 
 import com.jkm.jimkanman.global.error.ErrorCode;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class BusinessException extends RuntimeException {

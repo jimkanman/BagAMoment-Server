@@ -1,9 +1,9 @@
 package com.jkm.jimkanman.client.geocoding;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkm.jimkanman.domain.Coordinate;
+import com.jkm.jimkanman.global.error.ErrorCode;
 import com.jkm.jimkanman.global.error.exception.BusinessException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +30,8 @@ public class GoogleGeocodingClient implements GeocodingAdapter {
     }
     @Override
     public Coordinate getCoordinates(String address) {
+        if(address == null) throw new BusinessException(ErrorCode.STORAGE_ADDRESS_NULL);
+
         String uri = UriComponentsBuilder.fromUriString(BASE_URL)
                 .queryParam("address", address.replace(" ", "+"))
                 .queryParam("key", apiKey)

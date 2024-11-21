@@ -69,7 +69,7 @@ class StorageServiceImplTest {
 
 
         // When
-        List<StorageResponse.SimpleStorageDto> result = storageService.findNearbyStorages(latitude, longitude, radiusKm);
+        List<StorageResponse.StoragePreviewDto> result = storageService.findNearbyStorages(latitude, longitude, radiusKm);
 
         // Then
         assertEquals(1, result.size());

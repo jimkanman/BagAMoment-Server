@@ -2,9 +2,9 @@ package com.jkm.jimkanman.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jkm.jimkanman.dto.MemberRequest;
+import com.jkm.jimkanman.dto.MemberResponse;
 import com.jkm.jimkanman.global.error.ErrorCode;
-import com.jkm.jimkanman.global.error.exception.BusinessException;
-import com.jkm.jimkanman.global.success.SuccessCode;
+import com.jkm.jimkanman.global.error.ErrorResponse;
 import com.jkm.jimkanman.global.success.SuccessResponse;
 import com.jkm.jimkanman.util.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -22,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -91,9 +90,10 @@ private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
         String accessToken = jwtUtil.issueAccessToken(id, TokenCategory.ACCESS);
         // body로 jwt 발급
-        Map<String, String> jwtBody = new HashMap<>();
-        jwtBody.put("authorization", "Bearer " + accessToken);
-        writeOutput(request, response, SuccessResponse.ok(jwtBody));
+//        Map<String, String> jwtBody = new HashMap<>();
+//        jwtBody.put("authorization", "Bearer " + accessToken);
+        MemberResponse.TokenDto tokenDto = new MemberResponse.TokenDto(id, "Bearer " + accessToken);
+        writeOutput(request, response, SuccessResponse.ok(tokenDto));
     }
 
     /** 로그인 실패 시 401 반환 */
@@ -101,6 +101,11 @@ private final AuthenticationManagerBuilder authenticationManagerBuilder;
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         // 로그인 실패
         System.out.println("LoginFilter: Login attempt failed.");
+        writeOutput(
+                request,
+                response,
+                ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorResponse.of(ErrorCode.LOGIN_FAILED))
+        );
         response.setStatus(401);
     }
 
