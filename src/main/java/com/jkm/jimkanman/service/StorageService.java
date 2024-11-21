@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface StorageService {
 
-    List<StorageResponse.SimpleStorageDto> findNearbyStorages(Double latitude, Double longitude, Integer radius);
+    List<StorageResponse.StoragePreviewDto> findNearbyStorages(Double latitude, Double longitude, Integer radius);
 
     StorageResponse.StorageDto save(StorageRequest.StorageRegisterDto registerDto);
 
@@ -22,5 +22,5 @@ public interface StorageService {
 
     ReservationResponse.ReservationDto findReservationById(Long reservationId);
 
-    List<ReservationResponse.ReservationDto> findReservationsByMemberId(Long userId);
+    List<ReservationResponse.ReservationPreviewDto> findReservationsByMemberId(Long userId);
 }

@@ -1,8 +1,8 @@
 package com.jkm.jimkanman.controller;
 
 import com.jkm.jimkanman.dto.MemberRequest;
+import com.jkm.jimkanman.dto.MemberResponse;
 import com.jkm.jimkanman.dto.ReservationResponse;
-import com.jkm.jimkanman.dto.StorageResponse;
 import com.jkm.jimkanman.global.success.SuccessResponse;
 import com.jkm.jimkanman.service.MemberService;
 import com.jkm.jimkanman.service.StorageService;
@@ -13,9 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.concurrent.SuccessCallback;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,40 +26,35 @@ public class MemberController {
     private final StorageService storageService;
 
     @Operation(summary = "로그인", description = "사용자의 로그인 요청을 처리함")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "로그인 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청 형식"),
-            @ApiResponse(responseCode = "401", description = "인증 실패")
-    })
     @PostMapping("/login")
-    public Object login(@Valid @RequestBody MemberRequest.LoginDto loginDto){
+    public ResponseEntity<SuccessResponse<MemberResponse.TokenDto>> login(@Valid @RequestBody MemberRequest.LoginDto loginDto){
         // 로그인 기능은 LoginFilter에서 작동하므로 swagger 틀만 작성
-        return SuccessResponse.ok(" ");
+        return SuccessResponse.ok(new MemberResponse.TokenDto());
     }
 
     @Operation(summary = "회원가입", description = "새로운 사용자를 회원으로 등록함")
     @PostMapping("/signup")
-    public Object signup(@Valid @RequestBody  MemberRequest.SignupDto signupDto){
+    public ResponseEntity<SuccessResponse<MemberResponse.MemberDto>> signup(@Valid @RequestBody  MemberRequest.SignupDto signupDto){
         System.out.println("MemberController: /signup request " + signupDto);
         return SuccessResponse.ok(memberService.save(signupDto));
     }
 
     @Operation(summary = "회원 조회", description = "해당 ID를 가진 사용자의 정보를 조회함")
     @GetMapping("/users/{id}")
-    public Object getMember(@PathVariable("id") Long memberId){
+    public ResponseEntity<SuccessResponse<MemberResponse.MemberDto>> getMember(@PathVariable("id") Long memberId){
         System.out.println("MemberController: /users/" + memberId);
         return SuccessResponse.ok(memberService.findById(memberId));
     }
 
     @Operation(summary = "회원 정보 수정", description = "해당 ID를 가진 사용자의 정보를 수정함")
     @PutMapping("/users/{id}")
-    public Object updateUser(@Valid @PathVariable("id") String memberId, MemberRequest.UpdateDto updateDto){
+    public ResponseEntity<SuccessResponse<MemberResponse.MemberDto>> updateUser(@Valid @PathVariable("id") String memberId, MemberRequest.UpdateDto updateDto){
         return SuccessResponse.ok(memberService.updateById(memberId, updateDto));
     }
 
     @Operation(summary = "회원 삭제", description = "해당 ID를 가진 사용자를 삭제함 (회원탈퇴)")
     @DeleteMapping("/users/{id}")
-    public Object removeUser(@Valid @PathVariable("id") String memberId){
+    public ResponseEntity<SuccessResponse<MemberResponse.MemberDto>> removeUser(@Valid @PathVariable("id") String memberId){
         // TODO 권한 확인
         return SuccessResponse.ok(memberService.deleteById(memberId));
     }
@@ -69,7 +62,7 @@ public class MemberController {
     /* url의 쿼리 파라미터로 전달받은 필드가 존재하는지 반환 */
     @Operation(summary = "중복 체크", description = "쿼리 파라미터로 전달받은 필드(id, 닉네임 등)가 중복되는지 확인")
     @GetMapping("/users/check-duplicate")
-    public Object checkIdExists(
+    public ResponseEntity<SuccessResponse<Object>> checkIdExists(
             @Parameter(description = "중복 체크할 필드 정보 (필수 X)")
             @ModelAttribute MemberRequest.DuplicateCheckDto duplicateCheckDto){
         return SuccessResponse.ok(memberService.checkDuplicate(duplicateCheckDto));
@@ -77,8 +70,8 @@ public class MemberController {
 
     @Operation(summary = "사용자의 예약 정보 확인", description = "해당 id 사용자의 예약 목록을 가져옴")
     @GetMapping("/users/{userId}/reservations")
-    public Object getUserReservations(@PathVariable("userId") Long userId){
-        List<ReservationResponse.ReservationDto> storageDtos = storageService.findReservationsByMemberId(userId);
+    public ResponseEntity<SuccessResponse<List<ReservationResponse.ReservationPreviewDto>>> getUserReservations(@PathVariable("userId") Long userId){
+        List<ReservationResponse.ReservationPreviewDto> storageDtos = storageService.findReservationsByMemberId(userId);
         return SuccessResponse.ok(storageDtos);
     }
 

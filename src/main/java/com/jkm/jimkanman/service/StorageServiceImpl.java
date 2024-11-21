@@ -14,6 +14,7 @@ import com.jkm.jimkanman.util.GpsUtil;
 import com.jkm.jimkanman.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -36,7 +37,7 @@ public class StorageServiceImpl implements StorageService {
     private final SecurityUtil securityUtil;
 
     @Override
-    public List<StorageResponse.SimpleStorageDto> findNearbyStorages(Double latitude, Double longitude, Integer radiusKm) {
+    public List<StorageResponse.StoragePreviewDto> findNearbyStorages(Double latitude, Double longitude, Integer radiusKm) {
         // 해당 반경 내에 있는 보관소를 담아 반환
         if (latitude == null || longitude == null || radiusKm == null) {
             throw new IllegalArgumentException("위도와 경도, 반경이 모두 제공되어야 합니다.");
@@ -54,7 +55,14 @@ public class StorageServiceImpl implements StorageService {
         // 거리 필터링하여 반경 내에 있는 보관소만 선택
         return nearbyStorages.stream()
                 .filter(storage -> gpsUtil.isWithinRadius(latitude, longitude, storage.getLatitude(), storage.getLongitude(), radiusKm))
-                .map(storage -> new StorageResponse.SimpleStorageDto(storage))
+                .map(storage -> {
+                    double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLatitude());
+                    LocalTime opening = LocalTime.parse(storage.getOpeningTime());
+                    LocalTime closing = LocalTime.parse(storage.getClosingTime());
+                    LocalTime now = LocalTime.now();
+                    boolean isOpen = now.isAfter(opening) && now.isBefore(closing);
+                    return new StorageResponse.StoragePreviewDto(storage, distance, isOpen);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -194,10 +202,18 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
-    public List<ReservationResponse.ReservationDto> findReservationsByMemberId(Long userId) {
+    @Transactional
+    public List<ReservationResponse.ReservationPreviewDto> findReservationsByMemberId(Long userId) {
         List<StorageReservation> reservations = storageReservationRepository.findByMemberId(userId);
         return reservations.stream()
-                .map(reservation -> new ReservationResponse.ReservationDto(reservation))
+                .map(reservation -> {
+                    if(reservation.getStorage().getStorageImages().isEmpty())
+                        return new ReservationResponse.ReservationPreviewDto(reservation);
+                    else
+                        return new ReservationResponse.ReservationPreviewDto(
+                                reservation,
+                                reservation.getStorage().getStorageImages().get(0).getStoredFileName());
+                })
                 .toList();
     }
 

@@ -31,9 +31,12 @@ public class MemberResponse {
         private String username;
     }
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class TokenDto {
         private Long id;
-        private String loginToken;
+        private String authorization;
     }
 
     public static class DuplicateStatusDto {

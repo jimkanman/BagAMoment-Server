@@ -14,10 +14,12 @@ public enum ErrorCode {
     INVALID_FORMAT(HttpStatus.BAD_REQUEST, "잘못된 형식입니다."),
     INVALID_ID(HttpStatus.BAD_REQUEST, "잘못된 id 형식입니다."),
     INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 형식입니다."),
+    STORAGE_ADDRESS_NULL(HttpStatus.BAD_REQUEST, "보관소 주소가 비어있습니다."),
 
     /** 401 Unauthorized */
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "리소스 접근 권한이 없습니다."),
     UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 없거나 형식이 올바르지 않습니다"),
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "로그인이 실패하였습니다."),
 
     /** 403 Forbidden */
     FORBIDDEN(HttpStatus.FORBIDDEN, "리소스 접근 권한이 없습니다."),

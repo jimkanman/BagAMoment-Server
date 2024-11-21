@@ -19,7 +19,7 @@ public class GpsUtilImpl implements GpsUtil {
 
 
     /**
-     * 두 GPS 좌표 간의 거리를 계산하여 반환 (단위: km)
+     * 두 GPS 좌표 간의 거리를 계산하여 반환 (단위: m)
      */
     @Override
     public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
@@ -32,7 +32,7 @@ public class GpsUtilImpl implements GpsUtil {
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return EARTH_RADIUS_KM * c;
+        return EARTH_RADIUS_KM * c * 1000; // 1000을 곱해서 m로 변환
     }
 
     @Override

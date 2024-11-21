@@ -3,14 +3,11 @@ package com.jkm.jimkanman.security;
 import com.jkm.jimkanman.global.error.ErrorCode;
 import com.jkm.jimkanman.global.error.exception.BusinessException;
 import com.jkm.jimkanman.repository.MemberRepository;
-import com.jkm.jimkanman.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
