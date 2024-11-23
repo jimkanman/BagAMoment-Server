@@ -28,6 +28,7 @@ public class CustomErrorController implements ErrorController {
         String message = (String) errorAttributes.getOrDefault("message", "Unexpected error");
 
         System.out.println("CustomErrorController: received status : " + status);
+        System.out.println("CustomErrorController: error message - " + message);
 
         return ErrorResponse.builder()
                 .code(status)

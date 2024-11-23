@@ -83,7 +83,7 @@ public class GlobalExceptionHandler {
 
     /** 나머지 예외 핸드링 */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGeneralException(MethodArgumentNotValidException e, WebRequest request) {
+    public ResponseEntity<Object> handleGeneralException(Exception e, WebRequest request) {
         System.out.println("ExceptionHandler: handling exception - " + e);
         e.printStackTrace();
         final ErrorResponse errorBaseResponse = ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
