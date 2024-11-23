@@ -22,22 +22,23 @@ public class GpsUtilImpl implements GpsUtil {
      * 두 GPS 좌표 간의 거리를 계산하여 반환 (단위: m)
      */
     @Override
-    public double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
+    public double calculateDistance(double latA, double lngA, double latB, double lngB) {
+        double latDistance = Math.toRadians(latB - latA);
+        double lonDistance = Math.toRadians(lngB - lngA);
 
         // Haversine 공식으로 거리 계산
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                + Math.cos(Math.toRadians(latA)) * Math.cos(Math.toRadians(latB))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return EARTH_RADIUS_KM * c * 1000; // 1000을 곱해서 m로 변환
+        return EARTH_RADIUS_KM * c * 1000; // 1000을 곱해서 미터로 변환
     }
 
     @Override
-    public double[] calculateLatLngRangeAroundTarget(double targetLat, double targetLng, int radiusKm) {
+    public double[] calculateLatLngRangeAroundTarget(double targetLat, double targetLng, int radiusM) {
         // 위도 경도는 1도당 약 111.32km
+        double radiusKm = radiusM / 1000.0;
         double latDegreeRange = radiusKm / 111.32;
         double lngDegreeRange = radiusKm / (111.32 * Math.cos(Math.toRadians(targetLat))); // 경도의 범위 계산
 
@@ -46,7 +47,7 @@ public class GpsUtilImpl implements GpsUtil {
         double minLng = targetLng - lngDegreeRange;
         double maxLng = targetLng + lngDegreeRange;
 
-        System.out.printf("%dkm range from (%f, %f): lat=(%f~%f), lng=(%f~%f)\n", radiusKm, targetLat, targetLng, minLat, maxLat, minLng, maxLng);
+        System.out.printf("%dkm range from (%f, %f): lat=(%f~%f), lng=(%f~%f)\n", radiusM, targetLat, targetLng, minLat, maxLat, minLng, maxLng);
         return new double[]{minLat, maxLat, minLng, maxLng};
     }
 
@@ -54,8 +55,8 @@ public class GpsUtilImpl implements GpsUtil {
      * target 좌표가 기준 좌표에서 지정한 반경 내에 있는지 여부를 반환함.
      */
     @Override
-    public boolean isWithinRadius(double centerLat, double centerLng, double targetLat, double targetLng, double radiusKm) {
+    public boolean isWithinRadius(double centerLat, double centerLng, double targetLat, double targetLng, double radiusM) {
         double distance = calculateDistance(centerLat, centerLng, targetLat, targetLng);
-        return distance <= radiusKm;
+        return distance <= radiusM;
     }
 }
