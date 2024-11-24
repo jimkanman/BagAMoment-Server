@@ -97,7 +97,7 @@ public class StorageServiceImpl implements StorageService {
                 .latitude(coordinate.getLatitude())
                 .longitude(coordinate.getLongitude())
                 .build();
-        Member owner = memberRepository.findById(securityUtil.getMemberId())
+        Member owner = memberRepository.findById(securityUtil.getRequiredMemberId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
         storage.setOwner(owner);
 
@@ -119,7 +119,7 @@ public class StorageServiceImpl implements StorageService {
         // 보관소 예약 생성
         StorageRegistration registration = StorageRegistration.builder()
                 .storage(storage)
-                .member(securityUtil.getMember())
+                .member(owner)
                 .status(StorageRegistrationStatus.PENDING) // 등록 상태는 대기 중으로 설정
                 .build();
 
@@ -195,7 +195,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<ReservationResponse.ReservationDto> findReservationsOnStorage(Long storageId, Long memberId) {
-        List<StorageReservation> reservations = storageReservationRepository.findByStorageIdAndMemberIdOrderByEndDateTimeAsc(storageId, memberId);
+        List<StorageReservation> reservations = storageReservationRepository.findAllByStorageIdAndMemberIdOrderByEndDateTimeAsc(storageId, memberId);
         return reservations.stream()
                 .map(reservation -> new ReservationResponse.ReservationDto(reservation))
                 .toList();
@@ -211,7 +211,7 @@ public class StorageServiceImpl implements StorageService {
     @Override
     @Transactional
     public List<ReservationResponse.ReservationPreviewDto> findReservationsByMemberId(Long userId) {
-        List<StorageReservation> reservations = storageReservationRepository.findByMemberId(userId);
+        List<StorageReservation> reservations = storageReservationRepository.findAllByMemberId(userId);
         return reservations.stream()
                 .map(reservation -> {
                     if(reservation.getStorage().getStorageImages().isEmpty())
