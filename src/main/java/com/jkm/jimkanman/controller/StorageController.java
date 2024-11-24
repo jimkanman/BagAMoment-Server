@@ -42,7 +42,7 @@ public class StorageController {
     @Operation(summary = "보관소 예약 확인", description = "해당 id의 보관소에 걸린 예약 목록을 가져옴")
     @GetMapping("/storages/{storageId}/reservations")
     public ResponseEntity<SuccessResponse<List<ReservationResponse.ReservationDto>>> getStorageReservations(@PathVariable("storageId") Long storageId) {
-        List<ReservationResponse.ReservationDto> reservationDtos = storageService.findReservationsOnStorage(storageId, securityUtil.getMemberId());
+        List<ReservationResponse.ReservationDto> reservationDtos = storageService.findReservationsOnStorage(storageId, securityUtil.getRequiredMemberId());
         return SuccessResponse.ok(reservationDtos);
     }
 
