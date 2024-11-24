@@ -22,6 +22,7 @@ public enum ErrorCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "리소스 접근 권한이 없습니다."),
     UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 없거나 형식이 올바르지 않습니다"),
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "로그인이 실패하였습니다."),
+    LOGIN_REQUIRED(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다."),
 
     /** 403 Forbidden */
     FORBIDDEN(HttpStatus.FORBIDDEN, "리소스 접근 권한이 없습니다."),
@@ -29,6 +30,7 @@ public enum ErrorCode {
     /** 404 Not Found */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
     STORAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "보관소를 찾을 수 없습니다"),
+    STORAGE_RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "보관소 예약을 찾을 수 없습니다"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리소스를 찾을 수 없습니다."),
 
     /** 405 Method Not Allowed */
