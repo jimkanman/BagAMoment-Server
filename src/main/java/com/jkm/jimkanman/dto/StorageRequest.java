@@ -3,16 +3,14 @@ package com.jkm.jimkanman.dto;
 import com.jkm.jimkanman.domain.enums.StorageOption;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public class StorageRequest {
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
