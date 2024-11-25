@@ -37,7 +37,7 @@ public class ReservationResponse {
         private Long storageId;
         private String storageName;
         private List<ReservationRequest.LuggageDto> luggage;
-        private DeliveryReservationDto delivery;
+        private DeliveryResponse.ReservationDto delivery;
 
         private String startDateTime;
         private String endDateTime;
@@ -51,7 +51,7 @@ public class ReservationResponse {
 
             storageId = reservation.getId();
             storageName = reservation.getStorage().getName();
-            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            // delivery = new ReservationDto(reservation.getDeliveryReservation());
             delivery = null;
             if(reservation.getLuggageList() != null) {
                 luggage = reservation.getLuggageList().stream()
@@ -80,7 +80,7 @@ public class ReservationResponse {
         private String storageName;
         private String previewImagePath;
         private List<ReservationRequest.LuggageDto> luggage;
-        private DeliveryReservationDto delivery;
+        private DeliveryResponse.ReservationDto delivery;
 
         private String startDateTime;
         private String endDateTime;
@@ -93,7 +93,7 @@ public class ReservationResponse {
             id = reservation.getId();
             previewImagePath = JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH;
             storageId = reservation.getId();
-            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            // delivery = new ReservationDto(reservation.getDeliveryReservation());
             delivery = null;
             storageName = reservation.getStorage().getName();
             if(reservation.getLuggageList() != null) {
@@ -117,7 +117,7 @@ public class ReservationResponse {
             previewImagePath = imagePath;
             storageId = reservation.getId();
             storageName = reservation.getStorage().getName();
-            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
+            // delivery = new ReservationDto(reservation.getDeliveryReservation());
             delivery = null;
             if(reservation.getLuggageList() != null) {
                 luggage = reservation.getLuggageList().stream()
@@ -131,14 +131,6 @@ public class ReservationResponse {
 
             paymentAmount = reservation.getPaymentAmount();
             status = reservation.getStatus().name().toLowerCase();
-        }
-    }
-
-    @Getter
-    @NoArgsConstructor
-    public static class DeliveryReservationDto {
-        public DeliveryReservationDto(DeliveryReservation deliveryReservation) {
-            if (deliveryReservation == null) return;
         }
     }
 }
