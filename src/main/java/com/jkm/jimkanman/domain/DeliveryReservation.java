@@ -26,6 +26,7 @@ public class DeliveryReservation extends BaseEntity {
     @OneToOne(mappedBy = "deliveryReservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private Delivery delivery;
 
-    private LocalDateTime reservationDateTime; // 예약 날짜 및 시간
-    private String deliveredLocation; // 도착 위치
+    private LocalDateTime deliveryArrivalDateTime; // 예약 날짜 및 시간
+    private String destinationAddress; // 목적지
+    private String destinationPostalCode; // 우편번호
 }

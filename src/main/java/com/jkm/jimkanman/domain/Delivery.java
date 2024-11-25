@@ -1,10 +1,13 @@
 package com.jkm.jimkanman.domain;
 
+import com.jkm.jimkanman.domain.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +17,7 @@ import java.time.LocalDateTime;
 @Table(name = "delivery")
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class Delivery extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +27,13 @@ public class Delivery extends BaseEntity {
     @JoinColumn(name = "delivery_reservation_id")
     private DeliveryReservation deliveryReservation; // 배송 예약과의 관계
 
-    private boolean isStarted;
+    @Column(nullable = false)
+    @ColumnDefault("'PENDING'")
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus status;
+
     private Double latitude;
     private Double longitude;
     private LocalDateTime arrivalTime;
-    private String deliveredLocation; // 실제로 배송 완료한 지점
+    // private String deliveredLocation; // 실제로 배송 완료한 지점
 }
