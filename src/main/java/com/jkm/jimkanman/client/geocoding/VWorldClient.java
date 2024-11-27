@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 //@Component
+@Deprecated
 public class VWorldClient implements GeocodingAdapter {
     private final String apiKey;
     private final String BASE_URL = "https://api.vworld.kr/req/address";

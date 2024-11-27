@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 @Component
 public interface GpsUtil {
     Coordinate convertToCoordinates(String address);
-    boolean isWithinRadius(double centerLat, double centerLng, double targetLat, double targetLng, double radiusKm);
-    double calculateDistance(double lat1, double lon1, double lat2, double lon2);
-    double[] calculateLatLngRangeAroundTarget(double targetLat, double targetLng, int radiusKm);
+    boolean isWithinRadius(double centerLat, double centerLng, double targetLat, double targetLng, double radiusM);
+    double calculateDistance(double latA, double lngA, double latB, double lngB);
+    double[] calculateLatLngRangeAroundTarget(double targetLat, double targetLng, int radiusM);
 }

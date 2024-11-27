@@ -2,10 +2,7 @@ package com.jkm.jimkanman.domain;
 
 import com.jkm.jimkanman.domain.enums.StorageReservationStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +26,7 @@ public class StorageReservation extends BaseEntity {
     @JoinColumn(name = "storage_id")
     private Storage storage; // 보관소와의 관계
 
+    @Setter
     @OneToOne(mappedBy = "storageReservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private DeliveryReservation deliveryReservation;
 
