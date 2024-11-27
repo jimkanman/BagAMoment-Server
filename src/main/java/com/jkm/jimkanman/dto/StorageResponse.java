@@ -126,7 +126,7 @@ public class StorageResponse {
             // 이미지 파일명 리스트 생성
             if(storage.getStorageImages() != null) {
                 this.images = storage.getStorageImages().stream()
-                        .map(storageImage -> storageImage.getOriginalFileName())
+                        .map(storageImage -> storageImage.getStoredFileName())
                         .collect(Collectors.toList());
             }
             if(this.images == null || this.images.isEmpty()) this.images = List.of(JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH);
@@ -202,7 +202,7 @@ public class StorageResponse {
             // 이미지 파일명 리스트 생성
             if(storage.getStorageImages() != null) {
                 this.images = storage.getStorageImages().stream()
-                        .map(storageImage -> storageImage.getOriginalFileName())
+                        .map(storageImage -> storageImage.getStoredFileName())
                         .collect(Collectors.toList());
                 if (this.images.isEmpty()) this.images = List.of(JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH);
             }
