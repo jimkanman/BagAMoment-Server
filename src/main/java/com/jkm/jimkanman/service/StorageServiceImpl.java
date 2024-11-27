@@ -194,6 +194,14 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    public List<ReservationResponse.ReservationDto> findReservationsOnStorage(Long storageId) {
+        List<StorageReservation> reservations = storageReservationRepository.findAllByStorageId(storageId);
+        return reservations.stream()
+                .map(reservation -> new ReservationResponse.ReservationDto(reservation))
+                .toList();
+    }
+
+    @Override
     public List<ReservationResponse.ReservationDto> findReservationsOnStorage(Long storageId, Long memberId) {
         List<StorageReservation> reservations = storageReservationRepository.findAllByStorageIdAndMemberIdOrderByEndDateTimeAsc(storageId, memberId);
         return reservations.stream()
