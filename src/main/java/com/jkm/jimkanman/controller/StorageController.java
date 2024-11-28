@@ -62,6 +62,17 @@ public class StorageController {
         List<StorageResponse.StoragePreviewDto> nearbyStorages = storageService.findNearbyStorages(latitude, longitude, radius);
         return SuccessResponse.ok(nearbyStorages);
     }
+    @Operation(summary = "검색어 기반 보관소 목록 탐색", description = "검색어를 기반으로 보관소 목록을 거리순으로 가져옴")
+    @PostMapping("/storages/search")
+    public ResponseEntity<SuccessResponse<List<StorageResponse.StoragePreviewDto>>> findStoragesBySearchTerms(@RequestParam Double latitude,
+                                                                                                         @RequestParam Double longitude,
+                                                                                                         @RequestParam(required = false, defaultValue = "1000") Integer radius,
+                                                                                                          @RequestParam String searchTerm) {
+        System.out.println("StorageController: findStoragesBySearchTerms at " + latitude + ", " + longitude + ", radius = " + radius);
+        List<StorageResponse.StoragePreviewDto> nearbyStorages = storageService.findStoragesBySearchTerms(latitude, longitude, radius,searchTerm);
+        return SuccessResponse.ok(nearbyStorages);
+    }
+
 
     @Operation(summary = "예약 정보 확인", description = "해당 id의 예약 정보를 가져옴")
     @GetMapping("/reservations/{reservationId}")
@@ -70,7 +81,5 @@ public class StorageController {
         ReservationResponse.ReservationDto reservationDto = storageService.findReservationById(reservationId);
         return SuccessResponse.ok(reservationDto);
     }
-
-
 
 }
