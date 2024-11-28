@@ -118,4 +118,11 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
         return new LocationDto(delivery);
     }
+
+    @Override
+    public DeliveryResponse.DeliveryDto findDeliveryById(Long deliveryId) {
+        Delivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
+        return new DeliveryResponse.DeliveryDto(delivery);
+    }
 }

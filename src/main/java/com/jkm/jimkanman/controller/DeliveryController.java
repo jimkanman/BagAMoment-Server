@@ -50,7 +50,7 @@ public class DeliveryController {
 
     /** 배송기사 배정하기 */
     @Operation(summary = "배송 기사 배정 (배송 앱에서 사용)", description = "해당 id의 배송을 assigned 처리함")
-    @PostMapping("/delivery/assign")
+    @PostMapping("/delivery/assign/{deliveryId}")
     public ResponseEntity<SuccessResponse<DeliveryResponse.SimpleDeliveryDto>> assignDelivery(@PathVariable("deliveryId") Long deliveryId) {
         //배송 객체 status 업데이트 -> ASSIGNED
         DeliveryResponse.SimpleDeliveryDto simpleDeliveryDto = deliveryService.assignDelivery(deliveryId);
@@ -64,6 +64,14 @@ public class DeliveryController {
         // 배송 예약 객체 created_at 기준 정렬 후 조회
         List<DeliveryResponse.DeliveryDto> pendingDeliveries = deliveryService.getPendingDeliveries();
         return SuccessResponse.ok(pendingDeliveries);
+    }
+
+    /** 특정 배송 조회 */
+    @Operation(summary = "배송 조회", description = "특정 ID의 배송 정보 조회")
+    @GetMapping("/delivery/{deliveryId}")
+    public ResponseEntity<SuccessResponse<DeliveryResponse.DeliveryDto>> getDelivery(@PathVariable("deliveryId") Long deliveryId) {
+        DeliveryResponse.DeliveryDto delivery = deliveryService.findDeliveryById(deliveryId);
+        return SuccessResponse.ok(delivery);
     }
 
     /** 배송 시작하기 */

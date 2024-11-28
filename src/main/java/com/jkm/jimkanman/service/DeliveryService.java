@@ -21,4 +21,6 @@ public interface DeliveryService {
     void updateDeliveryLocation(LocationDto request);
 
     LocationDto getDeliveryLocation(Long deliveryId);
+
+    DeliveryResponse.DeliveryDto findDeliveryById(Long deliveryId);
 }
