@@ -4,6 +4,7 @@ import com.jkm.jimkanman.dto.*;
 import com.jkm.jimkanman.global.success.SuccessResponse;
 import com.jkm.jimkanman.service.DeliveryService;
 import com.jkm.jimkanman.service.StorageService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class DeliveryController {
      * */
 
     /** 배송 신청하기 */
+    @Operation(summary = "배송 예약 (배송 버튼은 이 API 호출하기)", description = "입력받은 정보로 보관소를 예약 + 배송까지 예약함")
     @PostMapping("/storages/{storageId}/delivery-reservations")
     public ResponseEntity<SuccessResponse<ReservationResponse.ReservationDto>> registerDelivery(
             @PathVariable("storageId")Long storageId,
@@ -47,6 +49,7 @@ public class DeliveryController {
     }
 
     /** 배송기사 배정하기 */
+    @Operation(summary = "배송 기사 배정 (배송 앱에서 사용)", description = "해당 id의 배송을 assigned 처리함")
     @PostMapping("/delivery/assign")
     public ResponseEntity<SuccessResponse<DeliveryResponse.SimpleDeliveryDto>> assignDelivery(@PathVariable("deliveryId") Long deliveryId) {
         //배송 객체 status 업데이트 -> ASSIGNED
@@ -55,6 +58,7 @@ public class DeliveryController {
     }
 
     /** PENDING 상태인 최근 배송 조회  */
+    @Operation(summary = "배송 요청 조회 (배송 앱에서 사용)", description = "신청 가능한 배송 요청 목록을 가져옴")
     @GetMapping("/delivery")
     public ResponseEntity<SuccessResponse<List<DeliveryResponse.DeliveryDto>>> getRecentDeliveries() {
         // 배송 예약 객체 created_at 기준 정렬 후 조회
@@ -63,6 +67,7 @@ public class DeliveryController {
     }
 
     /** 배송 시작하기 */
+    @Operation(summary = "배송 시작 (배송 앱에서 사용)", description = "해당 id의 배송 시작 처리")
     @PostMapping("/delivery/{deliveryId}/location")
     public ResponseEntity<SuccessResponse<Object>> startDelivery(
             @PathVariable("deliveryId") Long deliveryId,
@@ -74,17 +79,19 @@ public class DeliveryController {
         return SuccessResponse.ok(null);
     }
 
+    @Operation(summary = "배송 위치 수정 (HTTP Polling)", description = "입력받은 위치로 배송 위치를 수정함")
     @PutMapping("/delivery/{deliveryId}/location")
     public ResponseEntity<SuccessResponse<?>> updateDeliveryLocation() {
         // polling 방식
-        
+
         return null;
     }
 
+    @Operation(summary = "배송 위치 조회 (HTTP Polling)", description = "해당 id 배송의 위치를 조회함")
     @GetMapping("/delivery/{deliveryId}/location")
     public ResponseEntity<SuccessResponse<LocationDto>> getDeliveryLocation(@PathVariable("deliveryId") Long deliveryId) {
         LocationDto location = deliveryService.getDeliveryLocation(deliveryId);
-        return null;
+        return SuccessResponse.ok(location);
     }
 
     public ResponseEntity<SuccessResponse<?>> endDelivery() {
