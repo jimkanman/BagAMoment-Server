@@ -4,6 +4,7 @@ import com.jkm.jimkanman.domain.*;
 import com.jkm.jimkanman.domain.enums.StorageRegistrationStatus;
 import com.jkm.jimkanman.domain.enums.StorageReservationStatus;
 import com.jkm.jimkanman.dto.*;
+import com.jkm.jimkanman.dto.StorageResponse.StoragePreviewDto;
 import com.jkm.jimkanman.global.error.ErrorCode;
 import com.jkm.jimkanman.global.error.exception.BusinessException;
 import com.jkm.jimkanman.repository.*;
@@ -52,6 +53,34 @@ public class StorageServiceImpl implements StorageService {
 
         // 거리 필터링하여 반경 내에 있는 보관소만 선택
         return nearbyStorages.stream()
+                .filter(storage -> gpsUtil.isWithinRadius(latitude, longitude, storage.getLatitude(), storage.getLongitude(), radiusKm))
+                .map(storage -> {
+                    double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLatitude());
+                    LocalTime opening = LocalTime.parse(storage.getOpeningTime());
+                    LocalTime closing = LocalTime.parse(storage.getClosingTime());
+                    LocalTime now = LocalTime.now();
+                    boolean isOpen = now.isAfter(opening) && now.isBefore(closing);
+                    return new StorageResponse.StoragePreviewDto(storage, distance, isOpen);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<StoragePreviewDto> findStoragesBySearchTerms(Double latitude, Double longitude, Integer radiusKm,
+                                                             String searchTerm) {
+        // 해당 반경 내에 있는 보관소를 담아 반환
+        if (latitude == null || longitude == null || radiusKm == null||searchTerm.isEmpty()) {
+            throw new IllegalArgumentException("위도와 경도, 반경,검색어가 모두 제공되어야 합니다.");
+        }
+        double[] targetRange = gpsUtil.calculateLatLngRangeAroundTarget(latitude, longitude, radiusKm);
+        double minLat = targetRange[0];
+        double maxLat = targetRange[1];
+        double minLng = targetRange[2];
+        double maxLng = targetRange[3];
+        // 데이터베이스에서 검색어 기반 보관소 조회
+        List<Storage> storagesBySearchTerm = storageRepository.findByNameContaining(searchTerm);
+        // 거리 필터링하여 반경 내에 있는 보관소만 선택
+        return storagesBySearchTerm.stream()
                 .filter(storage -> gpsUtil.isWithinRadius(latitude, longitude, storage.getLatitude(), storage.getLongitude(), radiusKm))
                 .map(storage -> {
                     double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLatitude());
