@@ -22,6 +22,8 @@ public class DeliveryResponse {
         private String deliveryArrivalDateTime;
         private List<ReservationRequest.LuggageDto> luggage;
 
+        private String storageAddress;
+        private String storagePostalCode;
         private String destinationAddress;
         private String destinationPostalCode;
         private Double destinationLatitude;
@@ -40,6 +42,8 @@ public class DeliveryResponse {
                         .toList();
             }
 
+            storageAddress = deliveryReservation.getStorageReservation().getStorage().getDetailedAddress();
+            storagePostalCode = deliveryReservation.getStorageReservation().getStorage().getPostalCode();
             destinationAddress = deliveryReservation.getDestinationAddress();
             destinationPostalCode = deliveryReservation.getDestinationPostalCode();
             destinationLatitude = deliveryReservation.getDestinationLatitude();
