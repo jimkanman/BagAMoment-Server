@@ -60,9 +60,9 @@ public class DeliveryController {
     /** PENDING 상태인 최근 배송 조회  */
     @Operation(summary = "배송 요청 조회 (배송 앱에서 사용)", description = "신청 가능한 배송 요청 목록을 가져옴")
     @GetMapping("/delivery")
-    public ResponseEntity<SuccessResponse<List<DeliveryResponse.DeliveryDto>>> getRecentDeliveries() {
+    public ResponseEntity<SuccessResponse<List<DeliveryResponse.ReservationDto>>> getRecentDeliveries() {
         // 배송 예약 객체 created_at 기준 정렬 후 조회
-        List<DeliveryResponse.DeliveryDto> pendingDeliveries = deliveryService.getPendingDeliveries();
+        List<DeliveryResponse.ReservationDto> pendingDeliveries = deliveryService.getPendingDeliveries();
         return SuccessResponse.ok(pendingDeliveries);
     }
 

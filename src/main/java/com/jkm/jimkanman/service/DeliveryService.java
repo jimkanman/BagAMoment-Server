@@ -14,7 +14,7 @@ public interface DeliveryService {
 
     DeliveryResponse.SimpleDeliveryDto assignDelivery(Long deliveryId);
 
-    List<DeliveryResponse.DeliveryDto> getPendingDeliveries();
+    List<DeliveryResponse.ReservationDto> getPendingDeliveries();
 
     Object startDelivery(Long deliveryId, Double latitude, Double longitude);
 

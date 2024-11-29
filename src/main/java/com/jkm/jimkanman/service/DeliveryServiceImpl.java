@@ -77,17 +77,21 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
         delivery.setStatus(DeliveryStatus.ON_DELIVERY);
+//        deliveryRepository.save(delivery); // TODO 주석해제
         return new DeliveryResponse.SimpleDeliveryDto(delivery);
     }
 
     @Override
-    public List<DeliveryResponse.DeliveryDto> getPendingDeliveries() {
+    @Transactional
+    public List<DeliveryResponse.ReservationDto> getPendingDeliveries() {
         // Pending 상태인 배송 예약 created_at 기준 정렬 후 조회
-        List<Delivery> deliveries = deliveryRepository.findAllByOrderByCreatedAtDesc();
-        List<DeliveryResponse.DeliveryDto> deliveryDtos = deliveries.stream()
-                .map(delivery -> new DeliveryResponse.DeliveryDto(delivery))
+//       List<DeliveryReservation> deliveryReservations = deliveryReservationRepository.findAllByOrderByCreatedAtDesc(); // delivery - deliveryReservation - storageReservation 다 한번에 fetch해서 가져오게 하고 싶은데?
+        List<DeliveryReservation> deliveryReservations = deliveryReservationRepository.findAllWithDeliveryAndStorageOrderByCreatedAtDesc();
+        List<DeliveryResponse.ReservationDto> reservationDtos = deliveryReservations.stream()
+                .filter(reservation -> reservation.getDelivery().getStatus().equals(DeliveryStatus.PENDING))
+                .map(reservation -> new DeliveryResponse.ReservationDto(reservation))
                 .toList();
-        return deliveryDtos;
+        return reservationDtos;
     }
 
     @Override

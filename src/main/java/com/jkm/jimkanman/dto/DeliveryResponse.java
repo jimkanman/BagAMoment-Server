@@ -4,10 +4,9 @@ import com.jkm.jimkanman.converter.StringToDateTimeConverter;
 import com.jkm.jimkanman.domain.Delivery;
 import com.jkm.jimkanman.domain.DeliveryReservation;
 import com.jkm.jimkanman.domain.enums.DeliveryStatus;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 public class DeliveryResponse {
     private DeliveryResponse() {}
@@ -21,16 +20,31 @@ public class DeliveryResponse {
         private Long id;
         private Long deliveryId;
         private String deliveryArrivalDateTime;
+        private List<ReservationRequest.LuggageDto> luggage;
+
         private String destinationAddress;
         private String destinationPostalCode;
+        private Double destinationLatitude;
+        private Double destinationLongitude;
+
         private DeliveryStatus status;
 
         public ReservationDto(DeliveryReservation deliveryReservation) {
             id = deliveryReservation.getId();
             deliveryId = deliveryReservation.getDelivery().getId();
             deliveryArrivalDateTime = StringToDateTimeConverter.toDateString(deliveryReservation.getDeliveryArrivalDateTime());
+
+            if(deliveryReservation.getStorageReservation().getLuggageList() != null) {
+                luggage = deliveryReservation.getStorageReservation().getLuggageList().stream()
+                        .map(luggageEntity -> new ReservationRequest.LuggageDto(luggageEntity))
+                        .toList();
+            }
+
             destinationAddress = deliveryReservation.getDestinationAddress();
             destinationPostalCode = deliveryReservation.getDestinationPostalCode();
+            destinationLatitude = deliveryReservation.getDestinationLatitude();
+            destinationLongitude = deliveryReservation.getDestinationLongitude();
+
             status = deliveryReservation.getDelivery().getStatus();
         }
     }
@@ -65,6 +79,7 @@ public class DeliveryResponse {
         private Long id;
         private Double latitude;
         private Double longitude;
+        private String address;
         private String arrivalTime;
         private String status;
 
@@ -72,8 +87,14 @@ public class DeliveryResponse {
             id = delivery.getId();
             latitude = delivery.getLatitude();
             longitude = delivery.getLongitude();
+            // TODO ADDESS 넣기 (Delivery에? DeliveryReservation에?)
             arrivalTime = StringToDateTimeConverter.toDateString(delivery.getArrivalTime());
             status = delivery.getStatus().name();
         }
+    }
+
+    @Data
+    public static class DeliveryExtendedDto {
+
     }
 }
