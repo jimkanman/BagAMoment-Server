@@ -24,11 +24,11 @@ public class Delivery extends BaseEntity {
     @JoinColumn(name = "delivery_reservation_id")
     private DeliveryReservation deliveryReservation; // 배송 예약과의 관계
 
-    @Setter
-    @Column(nullable = false)
-    @ColumnDefault("'PENDING'")
-    @Enumerated(EnumType.STRING)
-    private DeliveryStatus status;
+//    @Setter
+//    @Column(nullable = false)
+//    @ColumnDefault("'PENDING'")
+//    @Enumerated(EnumType.STRING)
+//    private DeliveryStatus status;
 
     @Setter
     private Double latitude;

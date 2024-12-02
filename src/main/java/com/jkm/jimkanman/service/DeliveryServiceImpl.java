@@ -55,11 +55,12 @@ public class DeliveryServiceImpl implements DeliveryService {
                 .destinationPostalCode(reservationDto.getDestinationPostalCode())
                 .destinationLatitude(coordinate.getLatitude())
                 .destinationLongitude(coordinate.getLongitude())
+                .status(DeliveryStatus.PENDING)
                 .build();
         deliveryReservation.setStorageReservation(storageReservation);
 
         Delivery delivery = Delivery.builder()
-                .status(DeliveryStatus.PENDING)
+//                .status(DeliveryStatus.PENDING)
                 .build();
         delivery.setDeliveryReservation(deliveryReservation);
 

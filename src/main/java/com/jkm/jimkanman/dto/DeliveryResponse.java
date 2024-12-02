@@ -49,7 +49,7 @@ public class DeliveryResponse {
             destinationLatitude = deliveryReservation.getDestinationLatitude();
             destinationLongitude = deliveryReservation.getDestinationLongitude();
 
-            status = deliveryReservation.getDelivery().getStatus();
+            status = deliveryReservation.getStatus();
         }
     }
 
@@ -71,7 +71,7 @@ public class DeliveryResponse {
             storageReservationId = delivery.getDeliveryReservation().getStorageReservation().getId();
 
             arrivalTime = StringToDateTimeConverter.toDateString(delivery.getArrivalTime());
-            status = delivery.getStatus().name();
+            status = delivery.getDeliveryReservation().getStatus().name();
         }
     }
 
@@ -93,7 +93,7 @@ public class DeliveryResponse {
             longitude = delivery.getLongitude();
             // TODO ADDESS 넣기 (Delivery에? DeliveryReservation에?)
             arrivalTime = StringToDateTimeConverter.toDateString(delivery.getArrivalTime());
-            status = delivery.getStatus().name();
+            status = delivery.getDeliveryReservation().getStatus().name();
         }
     }
 

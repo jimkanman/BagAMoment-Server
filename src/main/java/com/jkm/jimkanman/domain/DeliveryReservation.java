@@ -1,7 +1,9 @@
 package com.jkm.jimkanman.domain;
 
+import com.jkm.jimkanman.domain.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -23,6 +25,12 @@ public class DeliveryReservation extends BaseEntity {
     @Setter
     @OneToOne(mappedBy = "deliveryReservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private Delivery delivery;
+
+    @Setter
+    @Column(nullable = false)
+    @ColumnDefault("'PENDING'")
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus status;
 
     private LocalDateTime deliveryArrivalDateTime; // 예약 날짜 및 시간
     private String destinationAddress; // 목적지
