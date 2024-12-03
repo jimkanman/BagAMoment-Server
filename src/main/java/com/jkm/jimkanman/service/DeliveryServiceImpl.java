@@ -1,9 +1,6 @@
 package com.jkm.jimkanman.service;
 
-import com.jkm.jimkanman.domain.Coordinate;
-import com.jkm.jimkanman.domain.Delivery;
-import com.jkm.jimkanman.domain.DeliveryReservation;
-import com.jkm.jimkanman.domain.StorageReservation;
+import com.jkm.jimkanman.domain.*;
 import com.jkm.jimkanman.domain.enums.DeliveryStatus;
 import com.jkm.jimkanman.dto.DeliveryRequest;
 import com.jkm.jimkanman.dto.DeliveryResponse;
@@ -13,6 +10,7 @@ import com.jkm.jimkanman.global.error.ErrorCode;
 import com.jkm.jimkanman.global.error.exception.BusinessException;
 import com.jkm.jimkanman.repository.DeliveryRepository;
 import com.jkm.jimkanman.repository.DeliveryReservationRepository;
+import com.jkm.jimkanman.repository.StorageRepository;
 import com.jkm.jimkanman.repository.StorageReservationRepository;
 import com.jkm.jimkanman.util.GpsUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +26,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final StorageReservationRepository storageReservationRepository;
     private final DeliveryReservationRepository deliveryReservationRepository;
     private final DeliveryRepository deliveryRepository;
+    private final StorageRepository storageRepository;
 
     private final GpsUtil gpsUtil;
 

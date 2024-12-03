@@ -28,4 +28,10 @@ public interface StorageService {
     List<ReservationResponse.ReservationPreviewDto> findReservationsByMemberId(Long userId);
 
     List<StoragePreviewDto> findStoragesBySearchTerms(Double latitude, Double longitude, Integer radius, String searchTerm);
+
+    boolean checkDeliveryService(Long storageId);
+
+    List<StorageResponse.StorageDto> findAllByOwnerId(Long memberId);
+
+    List<ReservationResponse.ReservationPreviewDto> findReservationsOnStoragesByOwnerId(Long memberId);
 }
