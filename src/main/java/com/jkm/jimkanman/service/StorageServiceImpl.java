@@ -1,6 +1,8 @@
 package com.jkm.jimkanman.service;
 
+import com.jkm.jimkanman.converter.StorageOptionConverter;
 import com.jkm.jimkanman.domain.*;
+import com.jkm.jimkanman.domain.enums.StorageOption;
 import com.jkm.jimkanman.domain.enums.StorageRegistrationStatus;
 import com.jkm.jimkanman.domain.enums.StorageReservationStatus;
 import com.jkm.jimkanman.dto.*;
@@ -11,6 +13,7 @@ import com.jkm.jimkanman.repository.*;
 import com.jkm.jimkanman.util.GpsUtil;
 import com.jkm.jimkanman.util.SecurityUtil;
 import java.util.Comparator;
+import jakarta.persistence.Convert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,6 +128,11 @@ public class StorageServiceImpl implements StorageService {
         // 약관 파일 저장
         String termsAndConditionsFilePath = fileService.saveFile(registerDto.getTermsAndConditions());
 
+        List<StorageOption> options = registerDto.getStorageOptions().stream()
+                                        .map(StorageOption::valueOf)
+                                        .toList();
+
+
         // 보관소 생성
         Storage storage = Storage.builder()
                 .name(registerDto.getRegisterName())
@@ -141,6 +149,7 @@ public class StorageServiceImpl implements StorageService {
                 .storageImages(new ArrayList<>())
                 .latitude(coordinate.getLatitude())
                 .longitude(coordinate.getLongitude())
+                .storageOption(options)
                 .build();
         Member owner = memberRepository.findById(securityUtil.getRequiredMemberId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
