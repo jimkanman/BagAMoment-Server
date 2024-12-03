@@ -23,4 +23,10 @@ public interface DeliveryService {
     LocationDto getDeliveryLocation(Long deliveryId);
 
     DeliveryResponse.DeliveryDto findDeliveryById(Long deliveryId);
+
+    DeliveryResponse.ReservationDto findDeliveryReservationById(Long deliveryReservationId);
+
+    void cancelDelivery(Long deliveryId);
+
+    DeliveryResponse.DeliveryAndReservationDto endDelivery(Long deliveryId);
 }

@@ -32,6 +32,7 @@ public enum ErrorCode {
     STORAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "보관소를 찾을 수 없습니다"),
     STORAGE_RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "보관소 예약을 찾을 수 없습니다"),
     DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "배송 신청을 찾을 수 없습니다"),
+    DELIVERY_RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "배송 예약을 찾을 수 없습니다"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "해당 리소스를 찾을 수 없습니다."),
 
     /** 405 Method Not Allowed */

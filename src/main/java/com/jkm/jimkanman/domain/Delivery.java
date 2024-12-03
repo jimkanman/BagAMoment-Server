@@ -1,9 +1,7 @@
 package com.jkm.jimkanman.domain;
 
-import com.jkm.jimkanman.domain.enums.DeliveryStatus;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
@@ -41,5 +39,9 @@ public class Delivery extends BaseEntity {
         if(this.deliveryReservation != null) this.deliveryReservation.setDelivery(null);
         this.deliveryReservation = deliveryReservation;
         deliveryReservation.setDelivery(this);
+    }
+
+    public void recordArrivalTime(){
+        arrivalTime = LocalDateTime.now();
     }
 }

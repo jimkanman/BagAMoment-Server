@@ -157,6 +157,12 @@ public class DeliveryServiceImpl implements DeliveryService {
     public DeliveryResponse.ReservationDto findDeliveryReservationById(Long deliveryReservationId) {
         DeliveryReservation deliveryReservation = deliveryReservationRepository.findById(deliveryReservationId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_RESERVATION_NOT_FOUND));
+        DeliveryResponse.ReservationDto reservationDto = new DeliveryResponse.ReservationDto(deliveryReservation);
+        reservationDto.setDistance(gpsUtil.calculateDistance(
+                reservationDto.getDestinationLatitude(),
+                reservationDto.getDestinationLongitude(),
+                reservationDto.getStorageLatitude(),
+                reservationDto.getStorageLongitude()));
         return new DeliveryResponse.ReservationDto(deliveryReservation);
     }
 
