@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface StorageRepository extends JpaRepository<Storage, Long> {
     List<Storage> findByLatitudeBetweenAndLongitudeBetween(double minLat, double maxLat, double minLng, double maxLng);
+    List<Storage> findByNameContaining(String name);
 }

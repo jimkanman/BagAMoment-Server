@@ -35,6 +35,6 @@ public class StorageRequest {
 
         private MultipartFile termsAndConditions;
         private List<MultipartFile> storageImages;
-        private List<StorageOption> storageOptions;
+        private List<String> storageOptions;
     }
 }

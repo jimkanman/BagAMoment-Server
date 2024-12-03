@@ -39,10 +39,21 @@ public class StorageController {
         return SuccessResponse.ok(reservationResultDto);
     }
 
-    @Operation(summary = "보관소 예약 확인", description = "해당 id의 보관소에 걸린 예약 목록을 가져옴")
+    @Operation(summary = "보관소 예약 확인", description = "해당 id의 보관소에 걸린 모든 예약 목록을 가져옴")
     @GetMapping("/storages/{storageId}/reservations")
     public ResponseEntity<SuccessResponse<List<ReservationResponse.ReservationDto>>> getStorageReservations(@PathVariable("storageId") Long storageId) {
-        List<ReservationResponse.ReservationDto> reservationDtos = storageService.findReservationsOnStorage(storageId, securityUtil.getRequiredMemberId());
+//        List<ReservationResponse.ReservationDto> reservationDtos = storageService.findReservationsOnStorage(storageId, securityUtil.getRequiredMemberId());
+        List<ReservationResponse.ReservationDto> reservationDtos = storageService.findReservationsOnStorage(storageId);
+        return SuccessResponse.ok(reservationDtos);
+    }
+
+    @Operation(summary = "보관소 예약 확인 (특정 회원)", description = "해당 id의 보관소에 걸린 특정 회원의 예약 목록을 가져옴")
+    @GetMapping("/storages/{storageId}/reservations/{memberId}")
+    public ResponseEntity<SuccessResponse<List<ReservationResponse.ReservationDto>>> getStorageReservations(
+            @PathVariable("storageId") Long storageId,
+            @PathVariable("memberId") Long memberId
+    ) {
+        List<ReservationResponse.ReservationDto> reservationDtos = storageService.findReservationsOnStorage(storageId, memberId);
         return SuccessResponse.ok(reservationDtos);
     }
 
@@ -62,6 +73,17 @@ public class StorageController {
         List<StorageResponse.StoragePreviewDto> nearbyStorages = storageService.findNearbyStorages(latitude, longitude, radius);
         return SuccessResponse.ok(nearbyStorages);
     }
+    @Operation(summary = "검색어 기반 보관소 목록 탐색", description = "검색어를 기반으로 보관소 목록을 거리순으로 가져옴")
+    @PostMapping("/storages/search")
+    public ResponseEntity<SuccessResponse<List<StorageResponse.StoragePreviewDto>>> findStoragesBySearchTerms(@RequestParam Double latitude,
+                                                                                                         @RequestParam Double longitude,
+                                                                                                         @RequestParam(required = false, defaultValue = "1000") Integer radius,
+                                                                                                          @RequestParam String searchTerm) {
+        System.out.println("StorageController: findStoragesBySearchTerms at " + latitude + ", " + longitude + ", radius = " + radius);
+        List<StorageResponse.StoragePreviewDto> nearbyStorages = storageService.findStoragesBySearchTerms(latitude, longitude, radius,searchTerm);
+        return SuccessResponse.ok(nearbyStorages);
+    }
+
 
     @Operation(summary = "예약 정보 확인", description = "해당 id의 예약 정보를 가져옴")
     @GetMapping("/reservations/{reservationId}")
@@ -70,7 +92,5 @@ public class StorageController {
         ReservationResponse.ReservationDto reservationDto = storageService.findReservationById(reservationId);
         return SuccessResponse.ok(reservationDto);
     }
-
-
 
 }

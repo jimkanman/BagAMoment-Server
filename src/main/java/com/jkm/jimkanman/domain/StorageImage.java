@@ -28,5 +28,6 @@ public class StorageImage extends BaseEntity {
         if(this.storage != null)
             this.storage.getStorageImages().remove(this);
         this.storage = storage;
+        storage.getStorageImages().add(this);
     }
 }

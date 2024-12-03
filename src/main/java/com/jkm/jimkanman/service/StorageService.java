@@ -5,6 +5,7 @@ import com.jkm.jimkanman.dto.ReservationResponse;
 import com.jkm.jimkanman.dto.StorageRequest;
 import com.jkm.jimkanman.dto.StorageResponse;
 
+import com.jkm.jimkanman.dto.StorageResponse.StoragePreviewDto;
 import java.util.List;
 
 
@@ -20,7 +21,11 @@ public interface StorageService {
 
     List<ReservationResponse.ReservationDto> findReservationsOnStorage(Long storageId, Long memberId);
 
+    List<ReservationResponse.ReservationDto> findReservationsOnStorage(Long storageId);
+
     ReservationResponse.ReservationDto findReservationById(Long reservationId);
 
     List<ReservationResponse.ReservationPreviewDto> findReservationsByMemberId(Long userId);
+
+    List<StoragePreviewDto> findStoragesBySearchTerms(Double latitude, Double longitude, Integer radius, String searchTerm);
 }

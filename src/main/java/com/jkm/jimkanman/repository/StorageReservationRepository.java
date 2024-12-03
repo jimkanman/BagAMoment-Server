@@ -12,4 +12,6 @@ public interface StorageReservationRepository extends JpaRepository<StorageReser
     List<StorageReservation> findAllByStorageIdAndMemberIdOrderByEndDateTimeAsc(Long storageId, Long memberId);
 
     List<StorageReservation> findAllByMemberId(Long memberId);
+
+    List<StorageReservation> findAllByStorageId(Long storageId);
 }
