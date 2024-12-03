@@ -12,6 +12,7 @@ import com.jkm.jimkanman.global.error.exception.BusinessException;
 import com.jkm.jimkanman.repository.*;
 import com.jkm.jimkanman.util.GpsUtil;
 import com.jkm.jimkanman.util.SecurityUtil;
+import java.util.Comparator;
 import jakarta.persistence.Convert;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<StorageResponse.StoragePreviewDto> findNearbyStorages(Double latitude, Double longitude, Integer radiusKm) {
-        // 해당 반경 내에 있는 보관소를 담아 반환
+        // 해당 반경 내에 있는 보관소를 담아 영업중인 보관소와 영업 종료된 보관소로 나누고 거리순으로 반환
         if (latitude == null || longitude == null || radiusKm == null) {
             throw new IllegalArgumentException("위도와 경도, 반경이 모두 제공되어야 합니다.");
         }
@@ -54,18 +55,32 @@ public class StorageServiceImpl implements StorageService {
         // 데이터베이스에서 범위 내 보관소 조회
         List<Storage> nearbyStorages = storageRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng);
 
-        // 거리 필터링하여 반경 내에 있는 보관소만 선택
-        return nearbyStorages.stream()
+        // Stream 처리 전에 영업 상태와 거리를 계산해서 저장
+        List<StoragePreviewDto> storageDtos = nearbyStorages.stream()
                 .filter(storage -> gpsUtil.isWithinRadius(latitude, longitude, storage.getLatitude(), storage.getLongitude(), radiusKm))
                 .map(storage -> {
-                    double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLatitude());
+                    double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLongitude());
                     LocalTime opening = LocalTime.parse(storage.getOpeningTime());
                     LocalTime closing = LocalTime.parse(storage.getClosingTime());
                     LocalTime now = LocalTime.now();
                     boolean isOpen = now.isAfter(opening) && now.isBefore(closing);
                     return new StorageResponse.StoragePreviewDto(storage, distance, isOpen);
                 })
+                .toList();
+        // 영업 중인 보관소와 영업 종료된 보관소로 나누기
+        List<StoragePreviewDto> openStorages = storageDtos.stream()
+                .filter(StoragePreviewDto::getIsOpen) // 영업 중인 것만 선택
+                .sorted(Comparator.comparingDouble(StoragePreviewDto::getDistance)) // 거리순 정렬
                 .collect(Collectors.toList());
+
+        List<StoragePreviewDto> closedStorages = storageDtos.stream()
+                .filter(dto->!dto.getIsOpen()) // 영업 종료된 것만 선택
+                .sorted(Comparator.comparingDouble(StoragePreviewDto::getDistance)) // 거리순 정렬
+                .collect(Collectors.toList());
+
+        // 두 리스트 합치기
+        openStorages.addAll(closedStorages);
+        return openStorages;
     }
 
     @Override
@@ -82,11 +97,12 @@ public class StorageServiceImpl implements StorageService {
         double maxLng = targetRange[3];
         // 데이터베이스에서 검색어 기반 보관소 조회
         List<Storage> storagesBySearchTerm = storageRepository.findByNameContaining(searchTerm);
+
         // 거리 필터링하여 반경 내에 있는 보관소만 선택
         return storagesBySearchTerm.stream()
                 .filter(storage -> gpsUtil.isWithinRadius(latitude, longitude, storage.getLatitude(), storage.getLongitude(), radiusKm))
                 .map(storage -> {
-                    double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLatitude());
+                    double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLongitude());
                     LocalTime opening = LocalTime.parse(storage.getOpeningTime());
                     LocalTime closing = LocalTime.parse(storage.getClosingTime());
                     LocalTime now = LocalTime.now();

@@ -14,6 +14,12 @@ import com.jkm.jimkanman.repository.StorageImageRepository;
 import com.jkm.jimkanman.repository.StorageRegistrationRepository;
 import com.jkm.jimkanman.repository.StorageRepository;
 import com.jkm.jimkanman.util.GpsUtil;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import com.jkm.jimkanman.util.SecurityUtil;
 import jakarta.transaction.Transactional;
 import java.time.LocalTime;
@@ -23,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -141,6 +148,7 @@ class StorageServiceImplTest {
                 .thenReturn(false);
 
 
+
         // Mock Repository
         List<Storage> mockStorages = List.of(
                 Storage.builder() // 반경 내 보관소
@@ -163,14 +171,108 @@ class StorageServiceImplTest {
         Mockito.when(storageRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng))
                 .thenReturn(mockStorages);
 
-
-
         // When
         List<StorageResponse.StoragePreviewDto> result = storageService.findNearbyStorages(latitude, longitude, radiusKm);
 
         // Then
         assertEquals(1, result.size());
         assertEquals("Storage1", result.get(0).getName());
+    }
+
+    @Test
+    void 근처_보관소_탐색_거리순() {
+        // Given
+        // 현재 위치
+        Double latitude = 37.5665;
+        Double longitude = 126.9780;
+        Integer radiusKm = 5;
+
+        // 범위 내 위도, 경도 값
+        double minLat = 37.5000, maxLat = 37.6000;
+        double minLng = 126.9000, maxLng = 127.0000;
+
+        // Mock GpsUtil
+        Mockito.when(gpsUtil.calculateLatLngRangeAroundTarget(latitude, longitude, radiusKm))
+                .thenReturn(new double[]{minLat, maxLat, minLng, maxLng});
+
+        Mockito.when(gpsUtil.isWithinRadius(latitude, longitude, 37.5500, 126.9500, radiusKm))
+                .thenReturn(true);
+        Mockito.when(gpsUtil.isWithinRadius(latitude, longitude, 37.5600, 126.9700, radiusKm))
+                .thenReturn(true);
+        Mockito.when(gpsUtil.isWithinRadius(latitude, longitude, 37.5800, 126.9900, radiusKm))
+                .thenReturn(true);
+        Mockito.when(gpsUtil.isWithinRadius(latitude, longitude, 37.6100, 127.1000, radiusKm))
+                .thenReturn(false);
+
+
+        Mockito.when(gpsUtil.calculateDistance(37.5665, 126.978, 37.55, 126.95))
+                .thenReturn(3.0);
+        Mockito.when(gpsUtil.calculateDistance(37.5665, 126.978, 37.56, 126.97))
+                .thenReturn(1.0);
+        Mockito.when(gpsUtil.calculateDistance(37.5665, 126.978, 37.58, 126.99))
+                .thenReturn(4.0);
+
+        // Mock Repository
+        List<Storage> mockStorages = List.of(
+                Storage.builder() // 반경 내, 거리 3km, 영업 중
+                        .id(1L)
+                        .name("Storage1")
+                        .latitude(37.5500)
+                        .longitude(126.9500)
+                        .openingTime("09:00")
+                        .closingTime("18:00")
+                        .build(),
+                Storage.builder() // 반경 내, 거리 1km, 영업 종료
+                        .id(2L)
+                        .name("Storage2")
+                        .latitude(37.5600)
+                        .longitude(126.9700)
+                        .openingTime("08:00")
+                        .closingTime("09:30")
+                        .build(),
+                Storage.builder() // 반경 내, 거리 4km, 영업 중
+                        .id(3L)
+                        .name("Storage3")
+                        .latitude(37.5800)
+                        .longitude(126.9900)
+                        .openingTime("10:00")
+                        .closingTime("22:00")
+                        .build(),
+                Storage.builder() // 반경 외, 거리 8km
+                        .id(4L)
+                        .name("Storage4")
+                        .latitude(37.6100)
+                        .longitude(127.1000)
+                        .openingTime("09:00")
+                        .closingTime("18:00")
+                        .build()
+        );
+        Mockito.when(storageRepository.findByLatitudeBetweenAndLongitudeBetween(minLat, maxLat, minLng, maxLng))
+                .thenReturn(mockStorages);
+
+        LocalTime fixedLocalTime = LocalTime.of(10, 0);
+        Clock clock = Mockito.mock(Clock.class);
+
+        LocalDate today = LocalDate.now(); // 오늘 날짜
+        LocalDateTime fixedDateTime = LocalDateTime.of(today, fixedLocalTime);
+
+
+        // When
+        List<StorageResponse.StoragePreviewDto> result = storageService.findNearbyStorages(latitude, longitude, radiusKm);
+
+
+        // Then
+        assertEquals(3, result.size()); // 반경 내에 있는 3개 보관소만 반환되었는지 확인
+
+        // 거리순 검증
+        assertEquals("Storage1", result.get(0).getName()); // 거리 3km, 영업 중
+        assertEquals("Storage3", result.get(1).getName()); // 거리 4km, 영업 중
+        assertEquals("Storage2", result.get(2).getName()); // 거리 1km, 영업 종료
+
+        // 영업 여부 검증
+        assertTrue(result.get(0).getIsOpen()); // Storage1은 영업 중
+        assertTrue(result.get(1).getIsOpen()); // Storage3은 영업 중
+        assertFalse(result.get(2).getIsOpen()); // Storage2는 영업 종료
     }
     @Test
     void 보관소_검색_범위내() {
