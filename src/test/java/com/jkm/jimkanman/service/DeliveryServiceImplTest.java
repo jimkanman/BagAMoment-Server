@@ -49,7 +49,7 @@ class DeliveryServiceImplTest {
         // 데이터 Mocking
         Delivery delivery1 = Delivery.builder()
                 .id(1L)
-                .status(DeliveryStatus.PENDING)
+//                .status(DeliveryStatus.PENDING)
                 .build();
 
         StorageReservation storageReservation1 = StorageReservation.builder()
@@ -60,11 +60,12 @@ class DeliveryServiceImplTest {
                 .id(201L)
                 .delivery(delivery1)
                 .storageReservation(storageReservation1)
+                .status(DeliveryStatus.PENDING)
                 .build();
 
         Delivery delivery2 = Delivery.builder()
                 .id(2L)
-                .status(DeliveryStatus.COMPLETE)
+//                .status(DeliveryStatus.COMPLETE)
                 .build();
 
         StorageReservation storageReservation2 = StorageReservation.builder()
@@ -75,6 +76,7 @@ class DeliveryServiceImplTest {
                 .id(202L)
                 .delivery(delivery2)
                 .storageReservation(storageReservation2)
+                .status(DeliveryStatus.PENDING)
                 .build();
 
         // Mock (Fetch Join으로 데이터 반환된다 가정)
