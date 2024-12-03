@@ -1,13 +1,9 @@
 package com.jkm.jimkanman.dto;
 
-import com.jkm.jimkanman.domain.DeliveryReservation;
+import com.jkm.jimkanman.converter.StringToDateTimeConverter;
 import com.jkm.jimkanman.domain.StorageReservation;
-import com.jkm.jimkanman.domain.enums.StorageReservationStatus;
 import com.jkm.jimkanman.global.JimkanmanConstants;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -27,7 +23,7 @@ public class ReservationResponse {
         }
     }
 
-    @Getter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -37,7 +33,7 @@ public class ReservationResponse {
         private Long storageId;
         private String storageName;
         private List<ReservationRequest.LuggageDto> luggage;
-        private DeliveryReservationDto delivery;
+        private DeliveryResponse.ReservationDto deliveryReservation;
 
         private String startDateTime;
         private String endDateTime;
@@ -51,25 +47,25 @@ public class ReservationResponse {
 
             storageId = reservation.getId();
             storageName = reservation.getStorage().getName();
-            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
-            delivery = null;
+
+            if(reservation.getDeliveryReservation() != null) {
+                deliveryReservation = new DeliveryResponse.ReservationDto(reservation.getDeliveryReservation());
+            }
+
             if(reservation.getLuggageList() != null) {
                 luggage = reservation.getLuggageList().stream()
                         .map(luggage -> new ReservationRequest.LuggageDto(luggage))
                         .toList();
             }
 
-
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-            startDateTime = reservation.getStartDateTime().format(formatter);
-            endDateTime = reservation.getEndDateTime().format(formatter);
-
+            startDateTime = StringToDateTimeConverter.toDateString(reservation.getStartDateTime());
+            endDateTime = StringToDateTimeConverter.toDateString(reservation.getEndDateTime());
             paymentAmount = reservation.getPaymentAmount();
             status = reservation.getStatus().name().toLowerCase();
         }
     }
 
-    @Getter
+    @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
@@ -80,7 +76,7 @@ public class ReservationResponse {
         private String storageName;
         private String previewImagePath;
         private List<ReservationRequest.LuggageDto> luggage;
-        private DeliveryReservationDto delivery;
+        private DeliveryResponse.ReservationDto deliveryReservation;
 
         private String startDateTime;
         private String endDateTime;
@@ -93,20 +89,20 @@ public class ReservationResponse {
             id = reservation.getId();
             previewImagePath = JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH;
             storageId = reservation.getId();
-            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
-            delivery = null;
             storageName = reservation.getStorage().getName();
+
+            if(reservation.getDeliveryReservation() != null) {
+                deliveryReservation = new DeliveryResponse.ReservationDto(reservation.getDeliveryReservation());
+            }
+
             if(reservation.getLuggageList() != null) {
                 luggage = reservation.getLuggageList().stream()
                         .map(luggage -> new ReservationRequest.LuggageDto(luggage))
                         .toList();
             }
 
-
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-            startDateTime = reservation.getStartDateTime().format(formatter);
-            endDateTime = reservation.getEndDateTime().format(formatter);
-
+            startDateTime = StringToDateTimeConverter.toDateString(reservation.getStartDateTime());
+            endDateTime = StringToDateTimeConverter.toDateString(reservation.getEndDateTime());
             paymentAmount = reservation.getPaymentAmount();
             status = reservation.getStatus().name().toLowerCase();
         }
@@ -117,28 +113,21 @@ public class ReservationResponse {
             previewImagePath = imagePath;
             storageId = reservation.getId();
             storageName = reservation.getStorage().getName();
-            // delivery = new DeliveryReservationDto(reservation.getDeliveryReservation());
-            delivery = null;
+
+            if(reservation.getDeliveryReservation() != null) {
+                deliveryReservation = new DeliveryResponse.ReservationDto(reservation.getDeliveryReservation());
+            }
+
             if(reservation.getLuggageList() != null) {
                 luggage = reservation.getLuggageList().stream()
                         .map(luggage -> new ReservationRequest.LuggageDto(luggage))
                         .toList();
             }
 
-            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-            startDateTime = reservation.getStartDateTime().format(formatter);
-            endDateTime = reservation.getEndDateTime().format(formatter);
-
+            startDateTime = StringToDateTimeConverter.toDateString(reservation.getStartDateTime());
+            endDateTime = StringToDateTimeConverter.toDateString(reservation.getEndDateTime());
             paymentAmount = reservation.getPaymentAmount();
             status = reservation.getStatus().name().toLowerCase();
-        }
-    }
-
-    @Getter
-    @NoArgsConstructor
-    public static class DeliveryReservationDto {
-        public DeliveryReservationDto(DeliveryReservation deliveryReservation) {
-            if (deliveryReservation == null) return;
         }
     }
 }

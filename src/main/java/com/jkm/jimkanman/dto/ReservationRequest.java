@@ -24,6 +24,12 @@ public class ReservationRequest {
 
         @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$", message = "날짜는 yyyy-MM-dd'T'HH:mm:ss형식이여야 합니다.")
         private String endDateTime;
+
+        public ReservationDto(DeliveryRequest.ReservationDto reservationDto) {
+            luggage = reservationDto.getLuggage();
+            startDateTime = reservationDto.getStartDateTime();
+            endDateTime = reservationDto.getEndDateTime();
+        }
     }
 
     @Getter

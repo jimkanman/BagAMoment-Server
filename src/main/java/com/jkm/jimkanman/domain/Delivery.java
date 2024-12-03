@@ -1,10 +1,8 @@
 package com.jkm.jimkanman.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +12,7 @@ import java.time.LocalDateTime;
 @Table(name = "delivery")
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicInsert
 public class Delivery extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +22,26 @@ public class Delivery extends BaseEntity {
     @JoinColumn(name = "delivery_reservation_id")
     private DeliveryReservation deliveryReservation; // 배송 예약과의 관계
 
-    private boolean isStarted;
+//    @Setter
+//    @Column(nullable = false)
+//    @ColumnDefault("'PENDING'")
+//    @Enumerated(EnumType.STRING)
+//    private DeliveryStatus status;
+
+    @Setter
     private Double latitude;
+    @Setter
     private Double longitude;
     private LocalDateTime arrivalTime;
-    private String deliveredLocation; // 실제로 배송 완료한 지점
+
+    public void setDeliveryReservation(DeliveryReservation deliveryReservation) {
+        if(deliveryReservation == null) return;
+        if(this.deliveryReservation != null) this.deliveryReservation.setDelivery(null);
+        this.deliveryReservation = deliveryReservation;
+        deliveryReservation.setDelivery(this);
+    }
+
+    public void recordArrivalTime(){
+        arrivalTime = LocalDateTime.now();
+    }
 }

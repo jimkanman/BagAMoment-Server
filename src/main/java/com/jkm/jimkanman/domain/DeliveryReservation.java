@@ -1,10 +1,9 @@
 package com.jkm.jimkanman.domain;
 
+import com.jkm.jimkanman.domain.enums.DeliveryStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -23,9 +22,26 @@ public class DeliveryReservation extends BaseEntity {
     @JoinColumn(name = "storage_reservation_id")
     private StorageReservation storageReservation; // 보관소 예약과의 관계
 
+    @Setter
     @OneToOne(mappedBy = "deliveryReservation", cascade = CascadeType.ALL, orphanRemoval = true)
     private Delivery delivery;
 
-    private LocalDateTime reservationDateTime; // 예약 날짜 및 시간
-    private String deliveredLocation; // 도착 위치
+    @Setter
+    @Column(nullable = false)
+    @ColumnDefault("'PENDING'")
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus status;
+
+    private LocalDateTime deliveryArrivalDateTime; // 예약 날짜 및 시간
+    private String destinationAddress; // 목적지
+    private String destinationPostalCode; // 우편번호
+    private Double destinationLatitude;
+    private Double destinationLongitude;
+
+    public void setStorageReservation(StorageReservation storageReservation) {
+        if(storageReservation == null) return;
+        if(this.storageReservation != null) this.storageReservation.setDeliveryReservation(null);
+        this.storageReservation = storageReservation;
+        storageReservation.setDeliveryReservation(this);
+    }
 }
