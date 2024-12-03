@@ -77,7 +77,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         // TODO N+1 쿼리 나가는지 확인 -> 맞는 경우 Fetch join으로 대체 (Delivery - DeliveryReservation - StorageReservation join)
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
-        delivery.setStatus(DeliveryStatus.ON_DELIVERY);
+        delivery.getDeliveryReservation().setStatus(DeliveryStatus.ASSIGNED);
 //        deliveryRepository.save(delivery); // TODO 주석해제
         return new DeliveryResponse.SimpleDeliveryDto(delivery);
     }
@@ -89,16 +89,38 @@ public class DeliveryServiceImpl implements DeliveryService {
 //       List<DeliveryReservation> deliveryReservations = deliveryReservationRepository.findAllByOrderByCreatedAtDesc(); // delivery - deliveryReservation - storageReservation 다 한번에 fetch해서 가져오게 하고 싶은데?
         List<DeliveryReservation> deliveryReservations = deliveryReservationRepository.findAllWithDeliveryAndStorageOrderByCreatedAtDesc();
         List<DeliveryResponse.ReservationDto> reservationDtos = deliveryReservations.stream()
-                .filter(reservation -> reservation.getDelivery().getStatus().equals(DeliveryStatus.PENDING))
+//                .filter(reservation -> reservation.getDelivery().getStatus().equals(DeliveryStatus.PENDING))
+                .filter(reservation -> reservation.getStatus().equals(DeliveryStatus.PENDING))
                 .map(reservation -> new DeliveryResponse.ReservationDto(reservation))
                 .toList();
+        // 출발지 ~ 목적지 거리 계산
+        reservationDtos.forEach(reservation -> {
+            try {
+                Double distance = gpsUtil.calculateDistance(
+                        reservation.getDestinationLatitude(),
+                        reservation.getDestinationLongitude(),
+                        reservation.getStorageLatitude(),
+                        reservation.getStorageLongitude());
+                reservation.setDistance(distance);
+            } catch (Exception e) {
+                System.out.println("DeliveryService: EXCEPTION at getPendingDeliveries while calculating distance = " + e.getMessage());
+            }
+        });
         return reservationDtos;
     }
 
     @Override
+    @Transactional
     public Object startDelivery(Long deliveryId, Double latitude, Double longitude) {
         // Delivery 시작: status 업데이트 + 위치로 배송 객체 초기화
-        
+        Delivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
+        delivery.getDeliveryReservation().setStatus(DeliveryStatus.ON_DELIVERY);
+        if (latitude != null && longitude != null) {
+            delivery.setLatitude(latitude);
+            delivery.setLongitude(longitude);
+        }
+        deliveryRepository.save(delivery);
         return null;
     }
 
@@ -129,5 +151,35 @@ public class DeliveryServiceImpl implements DeliveryService {
         Delivery delivery = deliveryRepository.findById(deliveryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
         return new DeliveryResponse.DeliveryDto(delivery);
+    }
+
+    @Override
+    public DeliveryResponse.ReservationDto findDeliveryReservationById(Long deliveryReservationId) {
+        DeliveryReservation deliveryReservation = deliveryReservationRepository.findById(deliveryReservationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_RESERVATION_NOT_FOUND));
+        return new DeliveryResponse.ReservationDto(deliveryReservation);
+    }
+
+    @Override
+    @Transactional
+    public void cancelDelivery(Long deliveryId) {
+        Delivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
+        delivery.setLatitude(null);
+        delivery.setLongitude(null);
+        delivery.getDeliveryReservation().setStatus(DeliveryStatus.PENDING);
+        deliveryRepository.save(delivery);
+    }
+
+    @Override
+    @Transactional
+    public DeliveryResponse.DeliveryAndReservationDto endDelivery(Long deliveryId) {
+        Delivery delivery = deliveryRepository.findById(deliveryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND));
+        delivery.getDeliveryReservation().setStatus(DeliveryStatus.COMPLETE);
+        delivery.recordArrivalTime();
+        deliveryRepository.save(delivery);
+
+        return new DeliveryResponse.DeliveryAndReservationDto(delivery);
     }
 }
