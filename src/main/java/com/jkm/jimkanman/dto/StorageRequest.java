@@ -1,6 +1,6 @@
 package com.jkm.jimkanman.dto;
 
-import com.jkm.jimkanman.domain.enums.StorageOption;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -29,12 +29,14 @@ public class StorageRequest {
         @Pattern(regexp = "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$", message = "올바른 시간 형식이 아닙니다.")
         private String closingTime;
 
+        private Boolean hasDeliveryService;
         private int backpackPricePerHour;
         private int carrierPricePerHour;
         private int miscellaneousItemPricePerHour;
 
         private MultipartFile termsAndConditions;
         private List<MultipartFile> storageImages;
+        @JsonProperty("storageOptions")
         private List<String> storageOptions;
     }
 }

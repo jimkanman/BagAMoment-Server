@@ -85,6 +85,10 @@ public class StorageController {
     }
 
 
+
+
+
+
     @Operation(summary = "예약 정보 확인", description = "해당 id의 예약 정보를 가져옴")
     @GetMapping("/reservations/{reservationId}")
     public ResponseEntity<SuccessResponse<ReservationResponse.ReservationDto>> getReservation(@PathVariable("reservationId") Long reservationId) {

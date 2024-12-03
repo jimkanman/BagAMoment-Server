@@ -1,8 +1,6 @@
 package com.jkm.jimkanman.controller;
 
-import com.jkm.jimkanman.dto.MemberRequest;
-import com.jkm.jimkanman.dto.MemberResponse;
-import com.jkm.jimkanman.dto.ReservationResponse;
+import com.jkm.jimkanman.dto.*;
 import com.jkm.jimkanman.global.success.SuccessResponse;
 import com.jkm.jimkanman.service.MemberService;
 import com.jkm.jimkanman.service.StorageService;
@@ -73,6 +71,24 @@ public class MemberController {
     public ResponseEntity<SuccessResponse<List<ReservationResponse.ReservationPreviewDto>>> getUserReservations(@PathVariable("userId") Long userId){
         List<ReservationResponse.ReservationPreviewDto> storageDtos = storageService.findReservationsByMemberId(userId);
         return SuccessResponse.ok(storageDtos);
+    }
+
+    @Operation(summary = "사용자가 만든 모든 보관소 확인", description = "해당 id 사용자가 등록한 보관소를 모두 가져옴")
+    @GetMapping("/users/{userId}/storages")
+    public ResponseEntity<SuccessResponse<List<StorageResponse.StorageDto>>> getRegisteredStorages(
+            @PathVariable("userId") Long memberId) {
+        List<StorageResponse.StorageDto> storageDtos = storageService.findAllByOwnerId(memberId);
+        return SuccessResponse.ok(storageDtos);
+    }
+
+
+    @Operation(summary = "사용자가 등록한 보관소에 걸린 예약 조회", description = "해당 id 사용자의 보관소에 등록된 모든 예약을 가져옴")
+    @GetMapping("/users/{userId}/storages/reservations")
+    public ResponseEntity<SuccessResponse<List<ReservationResponse.ReservationPreviewDto>>> getReservationsOnRegisteredStorages(
+            @PathVariable("userId") Long memberId
+    ) {
+        List<ReservationResponse.ReservationPreviewDto> reservationDtos = storageService.findReservationsOnStoragesByOwnerId(memberId);
+        return SuccessResponse.ok(reservationDtos);
     }
 
 }

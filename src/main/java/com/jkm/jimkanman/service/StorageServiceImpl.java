@@ -1,5 +1,6 @@
 package com.jkm.jimkanman.service;
 
+import com.amazonaws.services.ec2.model.Reservation;
 import com.jkm.jimkanman.converter.StorageOptionConverter;
 import com.jkm.jimkanman.domain.*;
 import com.jkm.jimkanman.domain.enums.StorageOption;
@@ -23,6 +24,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,8 +115,45 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    public boolean checkDeliveryService(Long storageId) {
+        Storage storage = storageRepository.findById(storageId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
+        return storage.getHasDeliveryService();
+    }
+
+    @Override
+    public List<StorageResponse.StorageDto> findAllByOwnerId(Long memberId) {
+        List<Storage> storages = storageRepository.findAllByOwnerId(memberId);
+        return storages.stream()
+                .map(storage -> new StorageResponse.StorageDto(storage))
+                .toList();
+    }
+
+    @Override
+    public List<ReservationResponse.ReservationPreviewDto> findReservationsOnStoragesByOwnerId(Long memberId) {
+        List<StorageReservation> reservations = storageRepository.findAllReservationsByOwnerId(memberId);
+        return reservations.stream()
+                .map(reservation -> new ReservationResponse.ReservationPreviewDto(reservation))
+                .toList();
+    }
+
+    @Override
     @Transactional
     public StorageResponse.StorageDto save(StorageRequest.StorageRegisterDto registerDto) {
+        // 보관소 옵션 파싱 (multipart이므로 List<String>이지만 따옴표와 대괄호가 그대로 실려옴)
+        List<StorageOption> storageOptions = registerDto.getStorageOptions().stream()
+                .map(option -> option.replaceAll("[\"'\\[\\]]", "")) // 불필요한 문자 제거
+                .map(parsedOption -> {
+                    try {
+                        return StorageOption.valueOf(parsedOption); // StorageOption으로 변환
+                    } catch (IllegalArgumentException e) {
+                        System.err.println("Invalid storage option: " + parsedOption); // 로그 추가
+                        return null; // 잘못된 옵션은 null로 처리
+                    }
+                })
+                .filter(Objects::nonNull) // null 값 제거
+                .toList();
+
         // 주소에서 위도와 경도를 얻어옴
         Coordinate coordinate;
         try {
@@ -127,10 +166,6 @@ public class StorageServiceImpl implements StorageService {
 
         // 약관 파일 저장
         String termsAndConditionsFilePath = fileService.saveFile(registerDto.getTermsAndConditions());
-
-        List<StorageOption> options = registerDto.getStorageOptions().stream()
-                                        .map(StorageOption::valueOf)
-                                        .toList();
 
 
         // 보관소 생성
@@ -145,11 +180,12 @@ public class StorageServiceImpl implements StorageService {
                 .backpackPricePerHour(registerDto.getBackpackPricePerHour())
                 .carrierPricePerHour(registerDto.getCarrierPricePerHour())
                 .miscellaneousItemPricePerHour(registerDto.getMiscellaneousItemPricePerHour())
+                .hasDeliveryService(registerDto.getHasDeliveryService())
                 .termsAndConditions(termsAndConditionsFilePath)
                 .storageImages(new ArrayList<>())
                 .latitude(coordinate.getLatitude())
                 .longitude(coordinate.getLongitude())
-                .storageOption(options)
+                .storageOption(storageOptions)
                 .build();
         Member owner = memberRepository.findById(securityUtil.getRequiredMemberId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));

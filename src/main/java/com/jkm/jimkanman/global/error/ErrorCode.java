@@ -26,6 +26,7 @@ public enum ErrorCode {
 
     /** 403 Forbidden */
     FORBIDDEN(HttpStatus.FORBIDDEN, "리소스 접근 권한이 없습니다."),
+    DELIVERY_NOT_ALLOWED(HttpStatus.FORBIDDEN, "배송 옵션이 비활성화된 보관소입니다."),
 
     /** 404 Not Found */
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
