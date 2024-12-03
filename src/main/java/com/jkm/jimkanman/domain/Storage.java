@@ -34,6 +34,7 @@ public class Storage extends BaseEntity {
     private String openingTime; // 시작시간
     private String closingTime; // 종료시간
 
+    private Boolean hasDeliveryService;
     private int backpackPricePerHour;
     private int carrierPricePerHour;
     private int miscellaneousItemPricePerHour;

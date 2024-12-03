@@ -1,10 +1,10 @@
 package com.jkm.jimkanman.dto;
 
 import com.jkm.jimkanman.domain.Storage;
-import com.jkm.jimkanman.domain.StorageImage;
 import com.jkm.jimkanman.global.JimkanmanConstants;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +30,7 @@ public class StorageResponse {
         private String previewImagePath;
         private String name;
         private List<String> storageOptions;
+        private Boolean hasDeliveryService;
 
         private String postalCode;
         private String detailedAddress;
@@ -45,6 +46,7 @@ public class StorageResponse {
             id = storage.getId();
             name = storage.getName();
             distance = distanceFromCurrentLocation;
+            hasDeliveryService = storage.getHasDeliveryService();
             this.isOpen = isOpen;
             latitude = storage.getLatitude();
             longitude = storage.getLongitude();
@@ -77,6 +79,7 @@ public class StorageResponse {
         private String phoneNumber;
         private String description;
         private String notice;
+        private Boolean hasDeliveryService;
 
         // 주소 관련
         private String postalCode; // 우편번호
@@ -94,7 +97,7 @@ public class StorageResponse {
 
         // 약관 파일명
         private String termsAndConditions;
-
+        
         private List<String> images;
         private List<String> storageOptions;
         public StorageDto(Storage storage){
@@ -104,6 +107,7 @@ public class StorageResponse {
             this.phoneNumber = storage.getPhoneNumber();
             this.description = storage.getDescription();
             this.notice = storage.getNotice();
+            this.hasDeliveryService = storage.getHasDeliveryService();
 
             // 주소 관련
             this.postalCode = storage.getPostalCode();
@@ -140,6 +144,7 @@ public class StorageResponse {
         }
     }
 
+    /** StorageDto + 운영여부, 현재 위치와의 거리 */
     @Getter
     @NoArgsConstructor
     public static class DetailedStorageDto {
@@ -149,6 +154,7 @@ public class StorageResponse {
         private String phoneNumber;
         private String description;
         private String notice;
+        private Boolean hasDeliveryService;
 
         // 주소 관련
         private String postalCode;
@@ -178,6 +184,7 @@ public class StorageResponse {
             this.phoneNumber = storage.getPhoneNumber();
             this.description = storage.getDescription();
             this.notice = storage.getNotice();
+            this.hasDeliveryService = storage.getHasDeliveryService();
 
             // 주소 관련
             this.postalCode = storage.getPostalCode();
