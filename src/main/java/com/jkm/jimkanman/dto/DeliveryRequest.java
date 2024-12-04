@@ -1,5 +1,6 @@
 package com.jkm.jimkanman.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -13,6 +14,7 @@ public class DeliveryRequest {
     @NoArgsConstructor
     @Builder
     @AllArgsConstructor
+    @Schema(name = "DeliveryRequest.ReservationDto")
     public static class ReservationDto {
         private List<ReservationRequest.LuggageDto> luggage;
 
