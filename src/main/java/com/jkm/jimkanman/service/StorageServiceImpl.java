@@ -62,11 +62,7 @@ public class StorageServiceImpl implements StorageService {
                 .filter(storage -> gpsUtil.isWithinRadius(latitude, longitude, storage.getLatitude(), storage.getLongitude(), radiusKm))
                 .map(storage -> {
                     double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLongitude());
-                    LocalTime opening = LocalTime.parse(storage.getOpeningTime());
-                    LocalTime closing = LocalTime.parse(storage.getClosingTime());
-                    LocalTime now = LocalTime.now();
-                    boolean isOpen = now.isAfter(opening) && now.isBefore(closing);
-                    return new StorageResponse.StoragePreviewDto(storage, distance, isOpen);
+                    return new StorageResponse.StoragePreviewDto(storage, distance);
                 })
                 .toList();
         // 영업 중인 보관소와 영업 종료된 보관소로 나누기
@@ -105,11 +101,7 @@ public class StorageServiceImpl implements StorageService {
                 .filter(storage -> gpsUtil.isWithinRadius(latitude, longitude, storage.getLatitude(), storage.getLongitude(), radiusKm))
                 .map(storage -> {
                     double distance = gpsUtil.calculateDistance(latitude, longitude, storage.getLatitude(), storage.getLongitude());
-                    LocalTime opening = LocalTime.parse(storage.getOpeningTime());
-                    LocalTime closing = LocalTime.parse(storage.getClosingTime());
-                    LocalTime now = LocalTime.now();
-                    boolean isOpen = now.isAfter(opening) && now.isBefore(closing);
-                    return new StorageResponse.StoragePreviewDto(storage, distance, isOpen);
+                    return new StorageResponse.StoragePreviewDto(storage, distance);
                 })
                 .collect(Collectors.toList());
     }
@@ -286,6 +278,7 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public List<ReservationResponse.ReservationDto> findReservationsOnStorage(Long storageId) {
         List<StorageReservation> reservations = storageReservationRepository.findAllByStorageId(storageId);
+        if(reservations.isEmpty()) throw new BusinessException(ErrorCode.STORAGE_RESERVATION_NOT_FOUND);
         return reservations.stream()
                 .map(reservation -> new ReservationResponse.ReservationDto(reservation))
                 .toList();
