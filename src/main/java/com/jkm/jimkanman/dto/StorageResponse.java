@@ -4,9 +4,8 @@ import com.jkm.jimkanman.domain.Storage;
 import com.jkm.jimkanman.global.JimkanmanConstants;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.util.ArrayList;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,12 +41,12 @@ public class StorageResponse {
         private String closingTime;
         private Boolean isOpen;
 
-        public StoragePreviewDto(Storage storage, Double distanceFromCurrentLocation, Boolean isOpen) {
+        public StoragePreviewDto(Storage storage, Double distanceFromCurrentLocation) {
             id = storage.getId();
             name = storage.getName();
             distance = distanceFromCurrentLocation;
             hasDeliveryService = storage.getHasDeliveryService();
-            this.isOpen = isOpen;
+            this.isOpen = determineIsOpen(openingTime, closingTime);;
             latitude = storage.getLatitude();
             longitude = storage.getLongitude();
             detailedAddress = storage.getDetailedAddress();
@@ -90,6 +89,7 @@ public class StorageResponse {
         // 운영 시간
         private String openingTime; // 시작시간
         private String closingTime; // 종료시간
+        private Boolean isOpen;
 
         private int backpackPricePerHour;
         private int carrierPricePerHour;
@@ -97,7 +97,7 @@ public class StorageResponse {
 
         // 약관 파일명
         private String termsAndConditions;
-        
+
         private List<String> images;
         private List<String> storageOptions;
         public StorageDto(Storage storage){
@@ -118,6 +118,7 @@ public class StorageResponse {
             // 운영 시간
             this.openingTime = storage.getOpeningTime();
             this.closingTime = storage.getClosingTime();
+            this.isOpen = determineIsOpen(openingTime, closingTime);
 
             // 가격 정책
             this.backpackPricePerHour = storage.getBackpackPricePerHour();
@@ -144,7 +145,7 @@ public class StorageResponse {
         }
     }
 
-    /** StorageDto + 운영여부, 현재 위치와의 거리 */
+    /** StorageDto + 현재 위치와의 거리 */
     @Getter
     @NoArgsConstructor
     public static class DetailedStorageDto {
@@ -177,7 +178,7 @@ public class StorageResponse {
 
         private List<String> images;
         private List<String> storageOptions;
-        public DetailedStorageDto(Storage storage, Double distance, Boolean isOpen){
+        public DetailedStorageDto(Storage storage, Double distance){
             this.id = storage.getId();
             this.name = storage.getName();
             this.ownerId = storage.getOwner().getId();
@@ -196,7 +197,7 @@ public class StorageResponse {
             // 운영 시간
             this.openingTime = storage.getOpeningTime();
             this.closingTime = storage.getClosingTime();
-            this.isOpen = isOpen;
+            this.isOpen = determineIsOpen(openingTime, closingTime);
 
             // 가격 정책
             this.backpackPricePerHour = storage.getBackpackPricePerHour();
@@ -220,6 +221,18 @@ public class StorageResponse {
                     .map(storageOption -> storageOption.name())
                     .collect(Collectors.toList());
             }
+        }
+    }
+
+    static Boolean determineIsOpen(String openingTime, String closingTime) {
+        try {
+            LocalTime now = LocalTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            return !now.isBefore(LocalTime.parse(openingTime, formatter))
+                    && !now.isAfter(LocalTime.parse(closingTime, formatter));
+        } catch (Exception e) {
+            System.out.println("StorageResponse: Exception while parsing " + openingTime + ", " + closingTime + ": " + e.getMessage());
+            return null;
         }
     }
 }
