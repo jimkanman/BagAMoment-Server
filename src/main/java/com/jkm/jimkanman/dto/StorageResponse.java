@@ -46,13 +46,13 @@ public class StorageResponse {
             name = storage.getName();
             distance = distanceFromCurrentLocation;
             hasDeliveryService = storage.getHasDeliveryService();
+            openingTime = storage.getOpeningTime();
+            closingTime = storage.getClosingTime();
             this.isOpen = determineIsOpen(openingTime, closingTime);;
             latitude = storage.getLatitude();
             longitude = storage.getLongitude();
             detailedAddress = storage.getDetailedAddress();
             postalCode = storage.getPostalCode();
-            openingTime = storage.getOpeningTime();
-            closingTime = storage.getClosingTime();
 
             if(storage.getStorageImages() != null) {
                 previewImagePath = storage.getStorageImages().stream()
