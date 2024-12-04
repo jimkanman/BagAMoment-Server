@@ -2,6 +2,7 @@ package com.jkm.jimkanman.dto;
 
 import com.jkm.jimkanman.domain.Luggage;
 import com.jkm.jimkanman.domain.enums.LuggageType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ public class ReservationRequest {
     @NoArgsConstructor
     @Builder
     @AllArgsConstructor
+    @Schema(name = "ReservationRequest.ReservationDto")
     static public class ReservationDto {
         private List<LuggageDto> luggage;
 

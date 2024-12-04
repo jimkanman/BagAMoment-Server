@@ -4,6 +4,7 @@ import com.jkm.jimkanman.converter.StringToDateTimeConverter;
 import com.jkm.jimkanman.domain.Delivery;
 import com.jkm.jimkanman.domain.DeliveryReservation;
 import com.jkm.jimkanman.domain.enums.DeliveryStatus;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class DeliveryResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    @Schema(name = "DeliveryResponse.ReservationDto")
     public static class ReservationDto {
         private Long id;
         private Long deliveryId;
