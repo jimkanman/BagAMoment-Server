@@ -1,18 +1,15 @@
 package com.jkm.jimkanman.service;
 
-import com.jkm.jimkanman.domain.Coordinate;
-import com.jkm.jimkanman.domain.Member;
-import com.jkm.jimkanman.domain.Storage;
-import com.jkm.jimkanman.domain.StorageRegistration;
+import com.jkm.jimkanman.domain.*;
 import com.jkm.jimkanman.domain.enums.StorageOption;
+import com.jkm.jimkanman.domain.enums.StorageReservationStatus;
 import com.jkm.jimkanman.dto.MemberResponse;
 import com.jkm.jimkanman.dto.StorageRequest;
 import com.jkm.jimkanman.dto.StorageResponse;
 import com.jkm.jimkanman.dto.StorageResponse.StorageDto;
-import com.jkm.jimkanman.repository.MemberRepository;
-import com.jkm.jimkanman.repository.StorageImageRepository;
-import com.jkm.jimkanman.repository.StorageRegistrationRepository;
-import com.jkm.jimkanman.repository.StorageRepository;
+import com.jkm.jimkanman.global.error.ErrorCode;
+import com.jkm.jimkanman.global.error.exception.BusinessException;
+import com.jkm.jimkanman.repository.*;
 import com.jkm.jimkanman.util.GpsUtil;
 import java.time.Clock;
 import java.time.LocalDate;
@@ -61,6 +58,9 @@ class StorageServiceImplTest {
     private MemberRepository memberRepository;
 
     @Mock
+    private StorageReservationRepository storageReservationRepository;
+
+    @Mock
     private GpsUtil gpsUtil;
 
     @Mock
@@ -71,6 +71,7 @@ class StorageServiceImplTest {
 
     @InjectMocks
     private StorageServiceImpl storageService;
+
 
     @Test
     void 보관소_생성() {
@@ -324,5 +325,68 @@ class StorageServiceImplTest {
         // Then
         assertEquals(1, result.size());
         assertEquals("Storage1", result.get(0).getName());
+    }
+
+    @Test
+    void 보관소예약_상태변경_올바른_경우() {
+        // Given
+        Long reservationId = 1L;
+        StorageReservation reservation = StorageReservation.builder()
+                .id(reservationId)
+                .status(StorageReservationStatus.PENDING)
+                .build();
+        String nextStatus = "APPROVED";
+
+        Mockito.when(storageReservationRepository.findById(reservationId))
+                .thenReturn(Optional.of(reservation));
+
+        // When
+        storageService.changeStorageReservationStatus(reservationId, nextStatus);
+
+        // Then
+        assertEquals(StorageReservationStatus.APPROVED, reservation.getStatus());
+        Mockito.verify(storageReservationRepository, Mockito.times(1)).findById(reservationId);
+    }
+
+    @Test
+    void 보관소예약_상태변경_잘못된_경우() {
+        // Given
+        Long reservationId = 1L;
+        StorageReservation reservation = StorageReservation.builder()
+                .id(reservationId)
+                .status(StorageReservationStatus.APPROVED)
+                .build();
+        String nextStatus = "PENDING"; // Invalid transition
+
+        Mockito.when(storageReservationRepository.findById(reservationId))
+                .thenReturn(Optional.of(reservation));
+
+        // When & Then
+        BusinessException exception = assertThrows(
+                BusinessException.class,
+                () -> storageService.changeStorageReservationStatus(reservationId, nextStatus)
+        );
+
+        assertEquals(ErrorCode.INVALID_STATUS_TRANSITION, exception.getErrorCode());
+        Mockito.verify(storageReservationRepository, Mockito.times(1)).findById(reservationId);
+    }
+
+    @Test
+    void 보관소예약_상태변경_보관소_미존재() {
+        // Given
+        Long reservationId = 1L;
+        String nextStatus = "APPROVED";
+
+        Mockito.when(storageReservationRepository.findById(reservationId))
+                .thenReturn(Optional.empty());
+
+        // When & Then
+        BusinessException exception = assertThrows(
+                BusinessException.class,
+                () -> storageService.changeStorageReservationStatus(reservationId, nextStatus)
+        );
+
+        assertEquals(ErrorCode.STORAGE_NOT_FOUND, exception.getErrorCode());
+        Mockito.verify(storageReservationRepository, Mockito.times(1)).findById(reservationId);
     }
 }
