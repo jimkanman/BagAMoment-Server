@@ -1,7 +1,5 @@
 package com.jkm.jimkanman.service;
 
-import com.amazonaws.services.ec2.model.Reservation;
-import com.jkm.jimkanman.converter.StorageOptionConverter;
 import com.jkm.jimkanman.domain.*;
 import com.jkm.jimkanman.domain.enums.StorageOption;
 import com.jkm.jimkanman.domain.enums.StorageRegistrationStatus;
@@ -14,7 +12,7 @@ import com.jkm.jimkanman.repository.*;
 import com.jkm.jimkanman.util.GpsUtil;
 import com.jkm.jimkanman.util.SecurityUtil;
 import java.util.Comparator;
-import jakarta.persistence.Convert;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,6 +125,17 @@ public class StorageServiceImpl implements StorageService {
         return reservations.stream()
                 .map(reservation -> new ReservationResponse.ReservationPreviewDto(reservation))
                 .toList();
+    }
+
+    @Override
+    public void changeStorageReservationStatus(Long reservationId, String nextStatus) {
+        StorageReservation reservation = storageReservationRepository.findById(reservationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
+        StorageReservationStatus next = StorageReservationStatus.valueOf(nextStatus);
+        if(!reservation.getStatus().canTransitionTo(next)) {
+            throw new BusinessException(ErrorCode.INVALID_STATUS_TRANSITION);
+        }
+        reservation.setStatus(next);
     }
 
     @Override

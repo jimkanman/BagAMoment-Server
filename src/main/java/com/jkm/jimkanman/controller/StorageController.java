@@ -84,10 +84,16 @@ public class StorageController {
         return SuccessResponse.ok(nearbyStorages);
     }
 
-
-
-
-
+    @Operation(summary = "보관소 예약 상태 변경", description = "보관소 예약 상태를 변경함 (REJECTED, APPROVED, STORING, COMPLETED)")
+    @PatchMapping("/reservations/{reservationId}/status")
+    public ResponseEntity<SuccessResponse<String>> changeStorageReservationStatus(
+            @PathVariable("reservationId") Long reservationId,
+            @RequestParam("status") String status
+    ) {
+        System.out.println("StorageController: chagngeStorageReservationStatus on reservation " + reservationId + " to " + status);
+        storageService.changeStorageReservationStatus(reservationId, status);
+        return SuccessResponse.ok("");
+    }
 
     @Operation(summary = "예약 정보 확인", description = "해당 id의 예약 정보를 가져옴")
     @GetMapping("/reservations/{reservationId}")

@@ -17,6 +17,7 @@ public enum ErrorCode {
     STORAGE_ADDRESS_NULL(HttpStatus.BAD_REQUEST, "보관소 주소가 비어있습니다."),
     LUGGAGE_NULL(HttpStatus.BAD_REQUEST, "짐 등록 없이 보관소 예약을 할 수 없습니다."),
     STORAGE_NOT_OPEN(HttpStatus.BAD_REQUEST, "예약시간이 보관소 운영시간과 맞지 않습니다."),
+    INVALID_STATUS_TRANSITION(HttpStatus.BAD_REQUEST, "예약 상태 변경이 올바르지 않습니다."),
 
     /** 401 Unauthorized */
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "리소스 접근 권한이 없습니다."),

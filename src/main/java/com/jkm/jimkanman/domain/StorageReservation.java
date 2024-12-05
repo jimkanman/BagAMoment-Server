@@ -1,6 +1,8 @@
 package com.jkm.jimkanman.domain;
 
 import com.jkm.jimkanman.domain.enums.StorageReservationStatus;
+import com.jkm.jimkanman.global.error.ErrorCode;
+import com.jkm.jimkanman.global.error.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -38,5 +40,6 @@ public class StorageReservation extends BaseEntity {
     private Integer paymentAmount; // 결제 금액
 
     @Enumerated(EnumType.STRING)
+    @Setter
     private StorageReservationStatus status; // 예약 상태 (승인, 거절, 대기 중)
 }
