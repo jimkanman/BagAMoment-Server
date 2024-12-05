@@ -136,6 +136,7 @@ public class StorageServiceImpl implements StorageService {
             throw new BusinessException(ErrorCode.INVALID_STATUS_TRANSITION);
         }
         reservation.setStatus(next);
+        storageReservationRepository.save(reservation);
     }
 
     @Override
