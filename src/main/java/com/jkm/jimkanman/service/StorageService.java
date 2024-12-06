@@ -34,4 +34,6 @@ public interface StorageService {
     List<StorageResponse.StorageDto> findAllByOwnerId(Long memberId);
 
     List<ReservationResponse.ReservationPreviewDto> findReservationsOnStoragesByOwnerId(Long memberId);
+
+    void changeStorageReservationStatus(Long reservationId, String status);
 }
