@@ -53,6 +53,9 @@ public class Storage extends BaseEntity {
     @Convert(converter = StorageOptionConverter.class)
     private List<StorageOption> storageOption;
 
+    @OneToOne(mappedBy = "storage", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private StorageRegistration storageRegistration;
+
     public void setOwner(Member owner) {
         if(this.owner != null) this.owner.getStorages().remove(this);
         this.owner = owner;
