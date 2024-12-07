@@ -20,5 +20,5 @@ public interface StorageRepository extends JpaRepository<Storage, Long> {
             "JOIN FETCH s.owner o " +
             "LEFT JOIN FETCH s.storageImages " +
             "WHERE o.id = :ownerId")
-    List<StorageReservation> findAllReservationsByOwnerId(Long memberId);
+    List<StorageReservation> findAllReservationsByOwnerId(Long ownerId);
 }
