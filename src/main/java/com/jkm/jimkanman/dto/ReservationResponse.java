@@ -71,6 +71,8 @@ public class ReservationResponse {
     @Builder
     static public class ReservationPreviewDto {
         private Long id;
+        private Long memberId;
+        private String memberNickname;
 
         private Long storageId;
         private String storageName;
@@ -85,32 +87,22 @@ public class ReservationResponse {
         private String status;
 
         public ReservationPreviewDto(StorageReservation reservation) {
-            if (reservation == null) return;
-            id = reservation.getId();
             previewImagePath = JimkanmanConstants.DEFAULT_PREVIEW_IMAGE_PATH;
-            storageId = reservation.getId();
-            storageName = reservation.getStorage().getName();
-
-            if(reservation.getDeliveryReservation() != null) {
-                deliveryReservation = new DeliveryResponse.ReservationDto(reservation.getDeliveryReservation());
-            }
-
-            if(reservation.getLuggageList() != null) {
-                luggage = reservation.getLuggageList().stream()
-                        .map(luggage -> new ReservationRequest.LuggageDto(luggage))
-                        .toList();
-            }
-
-            startDateTime = StringToDateTimeConverter.toDateString(reservation.getStartDateTime());
-            endDateTime = StringToDateTimeConverter.toDateString(reservation.getEndDateTime());
-            paymentAmount = reservation.getPaymentAmount();
-            status = reservation.getStatus().name().toLowerCase();
+            fillDtoFields(reservation);
         }
 
         public ReservationPreviewDto(StorageReservation reservation, String imagePath) {
+            previewImagePath = imagePath;
+            fillDtoFields(reservation);
+        }
+
+        private void fillDtoFields(StorageReservation reservation) {
             if (reservation == null) return;
             id = reservation.getId();
-            previewImagePath = imagePath;
+            if(reservation.getMember() != null) {
+                memberId = reservation.getMember().getId();
+                memberNickname = reservation.getMember().getNickname();
+            }
             storageId = reservation.getId();
             storageName = reservation.getStorage().getName();
 
