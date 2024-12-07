@@ -15,11 +15,10 @@ public interface StorageRepository extends JpaRepository<Storage, Long> {
 
     List<Storage> findAllByOwnerId(Long memberId);
 
-    @Query("""
-        SELECT sr
-        FROM StorageReservation sr
-        JOIN sr.storage s
-        WHERE s.owner.id = :memberId
-    """)
+    @Query("SELECT sr FROM StorageReservation sr " +
+            "JOIN FETCH sr.storage s " +
+            "JOIN FETCH s.owner o " +
+            "LEFT JOIN FETCH s.storageImages " +
+            "WHERE o.id = :ownerId")
     List<StorageReservation> findAllReservationsByOwnerId(Long memberId);
 }
