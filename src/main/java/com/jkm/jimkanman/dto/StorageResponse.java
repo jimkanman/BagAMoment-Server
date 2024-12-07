@@ -1,6 +1,7 @@
 package com.jkm.jimkanman.dto;
 
 import com.jkm.jimkanman.domain.Storage;
+import com.jkm.jimkanman.domain.enums.StorageRegistrationStatus;
 import com.jkm.jimkanman.global.JimkanmanConstants;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -98,8 +99,11 @@ public class StorageResponse {
         // 약관 파일명
         private String termsAndConditions;
 
+        // 기타
         private List<String> images;
         private List<String> storageOptions;
+        private StorageRegistrationStatus status;
+
         public StorageDto(Storage storage){
             this.id = storage.getId();
             this.name = storage.getName();
@@ -141,6 +145,10 @@ public class StorageResponse {
                 this.storageOptions = storage.getStorageOption().stream()
                         .map(storageOption -> storageOption.name())
                         .collect(Collectors.toList());
+            }
+
+            if(storage.getStorageRegistration() != null) {
+                status = storage.getStorageRegistration().getStatus();
             }
         }
     }
