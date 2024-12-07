@@ -123,7 +123,15 @@ public class StorageServiceImpl implements StorageService {
     public List<ReservationResponse.ReservationPreviewDto> findReservationsOnStoragesByOwnerId(Long memberId) {
         List<StorageReservation> reservations = storageRepository.findAllReservationsByOwnerId(memberId);
         return reservations.stream()
-                .map(reservation -> new ReservationResponse.ReservationPreviewDto(reservation))
+                .map(reservation -> {
+                    if(reservation.getStorage().getStorageImages().isEmpty())
+                        return new ReservationResponse.ReservationPreviewDto(reservation);
+                    else
+                        return new ReservationResponse.ReservationPreviewDto(
+                                reservation,
+                                reservation.getStorage().getStorageImages().get(0).getStoredFileName()
+                        );
+                })
                 .toList();
     }
 
