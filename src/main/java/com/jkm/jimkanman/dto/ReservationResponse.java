@@ -77,6 +77,7 @@ public class ReservationResponse {
         private Long storageId;
         private String storageName;
         private String previewImagePath;
+        private String storageAddress;
         private List<ReservationRequest.LuggageDto> luggage;
         private DeliveryResponse.ReservationDto deliveryReservation;
 
@@ -105,6 +106,7 @@ public class ReservationResponse {
             }
             storageId = reservation.getId();
             storageName = reservation.getStorage().getName();
+            storageAddress = reservation.getStorage().getDetailedAddress();
 
             if(reservation.getDeliveryReservation() != null) {
                 deliveryReservation = new DeliveryResponse.ReservationDto(reservation.getDeliveryReservation());
