@@ -19,6 +19,7 @@ import java.util.List;
 @Tag(name = "배송 API", description = "배송 관련 API입니다")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class DeliveryController {
     private final DeliveryService deliveryService;
     private final StorageService storageService;
