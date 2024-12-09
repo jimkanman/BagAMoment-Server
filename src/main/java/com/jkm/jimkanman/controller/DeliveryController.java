@@ -42,7 +42,7 @@ public class DeliveryController {
             @Valid @RequestBody DeliveryRequest.ReservationDto reservationDto
     ) {
         // 배송 비활성화한 보관소인 경우 Exception 반환
-        if(storageService.checkDeliveryService(storageId)) throw new BusinessException(ErrorCode.DELIVERY_NOT_ALLOWED);
+        if(!storageService.checkDeliveryService(storageId)) throw new BusinessException(ErrorCode.DELIVERY_NOT_ALLOWED);
         // 예약 생성
         ReservationResponse.ReservationResultDto reservationResult
                 = storageService.makeReservation(storageId, new ReservationRequest.ReservationDto(reservationDto));
