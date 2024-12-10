@@ -46,7 +46,7 @@ public class StorageController {
     @PostMapping("/storages/{storageId}/reservations/new")
     public ResponseEntity<SuccessResponse<ReservationResponse.ReservationResultDto>> reserveStorageWithLuggageImage(
             @PathVariable("storageId") Long storageId,
-            @Valid @RequestBody ReservationRequest.ReservationDto reservationDto
+            @Valid @ModelAttribute ReservationRequest.ReservationDto reservationDto
     ) {
         ReservationResponse.ReservationResultDto reservationResultDto = storageService.makeReservation(storageId, reservationDto);
         return SuccessResponse.ok(reservationResultDto);
