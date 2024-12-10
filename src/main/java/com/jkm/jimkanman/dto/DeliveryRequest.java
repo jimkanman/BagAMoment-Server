@@ -16,7 +16,7 @@ public class DeliveryRequest {
     @AllArgsConstructor
     @Schema(name = "DeliveryRequest.ReservationDto")
     public static class ReservationDto {
-        private List<ReservationRequest.LuggageDto> luggage;
+        private List<ReservationResponse.LuggageDto> luggage;
 
         @NotBlank
         private String destinationPostalCode;

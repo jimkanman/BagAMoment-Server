@@ -24,7 +24,7 @@ public class DeliveryResponse {
         private Long storageId;
 
         private String deliveryArrivalDateTime;
-        private List<ReservationRequest.LuggageDto> luggage;
+        private List<ReservationResponse.LuggageDto> luggage;
 
         // 위치 관련 정보
         private String storageAddress;
@@ -49,7 +49,7 @@ public class DeliveryResponse {
 
             if(deliveryReservation.getStorageReservation().getLuggageList() != null) {
                 luggage = deliveryReservation.getStorageReservation().getLuggageList().stream()
-                        .map(luggageEntity -> new ReservationRequest.LuggageDto(luggageEntity))
+                        .map(luggageEntity -> new ReservationResponse.LuggageDto(luggageEntity))
                         .toList();
             }
 
@@ -117,7 +117,7 @@ public class DeliveryResponse {
         private Long storageId;
 
         private String deliveryArrivalDateTime;
-        private List<ReservationRequest.LuggageDto> luggage;
+        private List<ReservationResponse.LuggageDto> luggage;
 
         private String storageAddress;
         private String storagePostalCode;
@@ -145,7 +145,7 @@ public class DeliveryResponse {
 
             if(deliveryReservation.getStorageReservation().getLuggageList() != null) {
                 luggage = deliveryReservation.getStorageReservation().getLuggageList().stream()
-                        .map(luggageEntity -> new ReservationRequest.LuggageDto(luggageEntity))
+                        .map(luggageEntity -> new ReservationResponse.LuggageDto(luggageEntity))
                         .toList();
             }
 
@@ -176,7 +176,7 @@ public class DeliveryResponse {
 
             if(deliveryReservation.getStorageReservation().getLuggageList() != null) {
                 luggage = deliveryReservation.getStorageReservation().getLuggageList().stream()
-                        .map(luggageEntity -> new ReservationRequest.LuggageDto(luggageEntity))
+                        .map(luggageEntity -> new ReservationResponse.LuggageDto(luggageEntity))
                         .toList();
             }
 
