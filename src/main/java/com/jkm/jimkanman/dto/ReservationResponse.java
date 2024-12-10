@@ -1,11 +1,12 @@
 package com.jkm.jimkanman.dto;
 
 import com.jkm.jimkanman.converter.StringToDateTimeConverter;
+import com.jkm.jimkanman.domain.Luggage;
 import com.jkm.jimkanman.domain.StorageReservation;
+import com.jkm.jimkanman.domain.enums.LuggageType;
 import com.jkm.jimkanman.global.JimkanmanConstants;
 import lombok.*;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ReservationResponse {
@@ -32,7 +33,7 @@ public class ReservationResponse {
 
         private Long storageId;
         private String storageName;
-        private List<ReservationRequest.LuggageDto> luggage;
+        private List<LuggageDto> luggage;
         private DeliveryResponse.ReservationDto deliveryReservation;
 
         private String startDateTime;
@@ -54,7 +55,7 @@ public class ReservationResponse {
 
             if(reservation.getLuggageList() != null) {
                 luggage = reservation.getLuggageList().stream()
-                        .map(luggage -> new ReservationRequest.LuggageDto(luggage))
+                        .map(luggage -> new LuggageDto(luggage))
                         .toList();
             }
 
@@ -78,7 +79,7 @@ public class ReservationResponse {
         private String storageName;
         private String previewImagePath;
         private String storageAddress;
-        private List<ReservationRequest.LuggageDto> luggage;
+        private List<LuggageDto> luggage;
         private DeliveryResponse.ReservationDto deliveryReservation;
 
         private String startDateTime;
@@ -114,7 +115,7 @@ public class ReservationResponse {
 
             if(reservation.getLuggageList() != null) {
                 luggage = reservation.getLuggageList().stream()
-                        .map(luggage -> new ReservationRequest.LuggageDto(luggage))
+                        .map(luggage -> new LuggageDto(luggage))
                         .toList();
             }
 
@@ -122,6 +123,27 @@ public class ReservationResponse {
             endDateTime = StringToDateTimeConverter.toDateString(reservation.getEndDateTime());
             paymentAmount = reservation.getPaymentAmount();
             status = reservation.getStatus().name().toLowerCase();
+        }
+    }
+
+    /** 짐 정보 Dto (응답용: 이미지 경로 포함 (String)) */
+    @Getter
+    @NoArgsConstructor
+    @Builder
+    @AllArgsConstructor
+    static public class LuggageDto {
+        private LuggageType type;
+        private String imagePath;
+        private Integer width;
+        private Integer depth;
+        private Integer height;
+
+        public LuggageDto(Luggage luggage) {
+            type = luggage.getType();
+            imagePath = luggage.getImagePath();
+            width = luggage.getWidth();
+            depth = luggage.getDepth();
+            height = luggage.getHeight();
         }
     }
 }

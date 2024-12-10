@@ -26,7 +26,9 @@ public class StorageController {
 
     @Operation(summary = "보관소 등록", description = "입력받은 정보로 보관소를 등록함")
     @PostMapping("/storages")
-    public ResponseEntity<SuccessResponse<StorageResponse.StorageDto>> saveStorage(@ModelAttribute StorageRequest.StorageRegisterDto registerDto) {
+    public ResponseEntity<SuccessResponse<StorageResponse.StorageDto>> saveStorage(
+            @ModelAttribute StorageRequest.StorageRegisterDto registerDto
+    ) {
         StorageResponse.StorageDto storageDto = storageService.save(registerDto);
         return SuccessResponse.ok(storageDto);
     }
@@ -34,7 +36,18 @@ public class StorageController {
     @Operation(summary = "보관소 예약", description = "입력받은 정보로 보관소를 예약함")
     @PostMapping("/storages/{storageId}/reservations")
     public ResponseEntity<SuccessResponse<ReservationResponse.ReservationResultDto>> reserveStorage(@PathVariable("storageId") Long storageId,
-                                 @Valid @RequestBody ReservationRequest.ReservationDto reservationDto) {
+             @Valid @RequestBody ReservationRequest.ReservationDto reservationDto
+    ) {
+        ReservationResponse.ReservationResultDto reservationResultDto = storageService.makeReservation(storageId, reservationDto);
+        return SuccessResponse.ok(reservationResultDto);
+    }
+
+    @Operation(summary = "보관소 예약 (신) (짐 사진 포함)", description = "입력받은 정보로 보관소를 예약함 (짐 사진 포함)")
+    @PostMapping("/storages/{storageId}/reservations/new")
+    public ResponseEntity<SuccessResponse<ReservationResponse.ReservationResultDto>> reserveStorageWithLuggageImage(
+            @PathVariable("storageId") Long storageId,
+            @Valid @RequestBody ReservationRequest.ReservationDto reservationDto
+    ) {
         ReservationResponse.ReservationResultDto reservationResultDto = storageService.makeReservation(storageId, reservationDto);
         return SuccessResponse.ok(reservationResultDto);
     }

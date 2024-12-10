@@ -17,6 +17,8 @@ public interface StorageService {
 
     StorageResponse.StorageDto findById(Long storageId);
 
+    ReservationResponse.ReservationResultDto makeReservationWithLuggageImage(Long storageId, ReservationRequest.ReservationWithLuggageImageDto reservationDto);
+
     ReservationResponse.ReservationResultDto makeReservation(Long storageId, ReservationRequest.ReservationDto reservationDto);
 
     List<ReservationResponse.ReservationDto> findReservationsOnStorage(Long storageId, Long memberId);
