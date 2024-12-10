@@ -1,5 +1,6 @@
 package com.jkm.jimkanman.dto;
 
+import com.jkm.jimkanman.domain.DeliveryReservation;
 import com.jkm.jimkanman.domain.enums.LuggageType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
@@ -25,6 +26,12 @@ public class ReservationRequest {
 
         @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$", message = "날짜는 yyyy-MM-dd'T'HH:mm:ss형식이여야 합니다.")
         private String endDateTime;
+
+        public ReservationWithLuggageImageDto(DeliveryRequest.ReservationWithLuggageImageDto reservation) {
+            luggage = reservation.getLuggage();
+            startDateTime = reservation.getStartDateTime();
+            endDateTime = reservation.getEndDateTime();
+        }
     }
 
     @Getter
@@ -47,6 +54,14 @@ public class ReservationRequest {
             startDateTime = reservationDto.getStartDateTime();
             endDateTime = reservationDto.getEndDateTime();
             if(endDateTime == null) endDateTime = reservationDto.getDeliveryArrivalDateTime();
+        }
+
+        public ReservationDto(DeliveryRequest.ReservationWithLuggageImageDto reservationDto) {
+            luggage = reservationDto.getLuggage().stream()
+                    .map(l -> new ReservationResponse.LuggageDto(l))
+                    .toList();
+            startDateTime = reservationDto.getStartDateTime();
+            endDateTime = reservationDto.getEndDateTime();
         }
     }
 

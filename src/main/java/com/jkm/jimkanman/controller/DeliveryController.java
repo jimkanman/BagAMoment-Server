@@ -52,6 +52,25 @@ public class DeliveryController {
         return SuccessResponse.ok(deliveryReservationResult);
     }
 
+    /** 배송 신청하기 (신) */
+    @Operation(summary = "배송 예약 (신) (짐 이미지 포함)", description = "입력받은 정보로 보관소를 예약 + 배송까지 예약함")
+    @PostMapping("/storages/{storageId}/delivery-reservations/new")
+    public ResponseEntity<SuccessResponse<ReservationResponse.ReservationDto>> registerDeliveryWithLuggageImages(
+            @PathVariable("storageId")Long storageId,
+            @Valid @ModelAttribute DeliveryRequest.ReservationWithLuggageImageDto reservationDto
+    ) {
+        // 배송 비활성화한 보관소인 경우 Exception 반환
+        if(!storageService.checkDeliveryService(storageId)) throw new BusinessException(ErrorCode.DELIVERY_NOT_ALLOWED);
+        // 예약 생성
+        ReservationResponse.ReservationResultDto reservationResult
+                = storageService.makeReservationWithLuggageImage(storageId, new ReservationRequest.ReservationWithLuggageImageDto(reservationDto));
+
+        // 배송예약 & 배송 객체 생성
+        ReservationResponse.ReservationDto deliveryReservationResult = deliveryService.makeDeliveryReservation(reservationResult.getId(), new DeliveryRequest.ReservationDto(reservationDto));
+        return SuccessResponse.ok(deliveryReservationResult);
+    }
+
+
     /** 배송 신청 정보 조회 */
     @Operation(summary = "배송 예약 정보 조회 (배송 앱에서 사용)", description = "해당 id의 배송 예약 정보 조회")
     @GetMapping("/delivery/reservation/{deliveryReservationId}")

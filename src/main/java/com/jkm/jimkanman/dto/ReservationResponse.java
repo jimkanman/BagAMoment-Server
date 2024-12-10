@@ -147,5 +147,13 @@ public class ReservationResponse {
             depth = luggage.getDepth();
             height = luggage.getHeight();
         }
+
+        public LuggageDto(ReservationRequest.LuggageDto luggageDto) {
+            type = luggageDto.getType();
+            imagePath = luggageDto.getImageFile().getName();
+            width = luggageDto.getWidth();;
+            depth = luggageDto.getDepth();
+            height = luggageDto.getHeight();
+        }
     }
 }
