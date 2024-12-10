@@ -10,7 +10,7 @@ import java.util.List;
 public class DeliveryRequest {
     private DeliveryRequest(){}
 
-    @Getter
+    @Data
     @NoArgsConstructor
     @Builder
     @AllArgsConstructor

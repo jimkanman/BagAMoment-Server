@@ -46,6 +46,7 @@ public class ReservationRequest {
             luggage = reservationDto.getLuggage();
             startDateTime = reservationDto.getStartDateTime();
             endDateTime = reservationDto.getEndDateTime();
+            if(endDateTime == null) endDateTime = reservationDto.getDeliveryArrivalDateTime();
         }
     }
 
