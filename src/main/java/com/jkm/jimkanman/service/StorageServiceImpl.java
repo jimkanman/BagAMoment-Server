@@ -16,6 +16,7 @@ import java.util.Comparator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -241,7 +242,8 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public ReservationResponse.ReservationResultDto makeReservationWithLuggageImage(
             Long storageId,
-            ReservationRequest.ReservationWithLuggageImageDto reservationDto
+            ReservationRequest.ReservationDto reservationDto,
+            List<MultipartFile> luggageImages
     ) {
         Storage storage = storageRepository.findById(storageId).orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
 
@@ -256,15 +258,19 @@ public class StorageServiceImpl implements StorageService {
 
         // 짐 dto 엔티티 변환 및 가격 계산
         if(reservationDto.getLuggage() == null) throw new BusinessException(ErrorCode.LUGGAGE_NULL);
-        List<Luggage> luggages = reservationDto.getLuggage().stream()
-                .map(luggageDto -> Luggage.builder()
-                        .type(luggageDto.getType())
-                        .depth(luggageDto.getDepth())
-                        .width(luggageDto.getWidth())
-                        .imagePath(fileService.saveFile(luggageDto.getImageFile())) // 이미지 저장
-                        .height(luggageDto.getHeight())
-                        .build())
-                .toList();
+        List<Luggage> luggages = new ArrayList<>();
+        for(int i = 0; i < luggageImages.size(); i++){
+            ReservationRequest.PlainLuggageDto luggageDto = reservationDto.getLuggage().get(i);
+            MultipartFile image = luggageImages.get(i);
+            Luggage luggage = Luggage.builder()
+                    .type(luggageDto.getType())
+                    .depth(luggageDto.getDepth())
+                    .width(luggageDto.getWidth())
+                    .imagePath(fileService.saveFile(image)) // 이미지 저장
+                    .height(luggageDto.getHeight())
+                    .build();
+            luggages.add(luggage);
+        }
 
         int price = luggages.stream()
                 .map(luggage -> switch (luggage.getType()) {

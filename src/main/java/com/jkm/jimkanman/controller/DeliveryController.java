@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -57,16 +58,25 @@ public class DeliveryController {
     @PostMapping("/storages/{storageId}/delivery-reservations/new")
     public ResponseEntity<SuccessResponse<ReservationResponse.ReservationDto>> registerDeliveryWithLuggageImages(
             @PathVariable("storageId")Long storageId,
-            @Valid @ModelAttribute DeliveryRequest.ReservationWithLuggageImageDto reservationDto
+            @Valid @RequestPart("data") DeliveryRequest.ReservationDto reservationDto,
+            @RequestPart("files") List<MultipartFile> luggageImages
+
     ) {
         // 배송 비활성화한 보관소인 경우 Exception 반환
         if(!storageService.checkDeliveryService(storageId)) throw new BusinessException(ErrorCode.DELIVERY_NOT_ALLOWED);
         // 예약 생성
-        ReservationResponse.ReservationResultDto reservationResult
-                = storageService.makeReservationWithLuggageImage(storageId, new ReservationRequest.ReservationWithLuggageImageDto(reservationDto));
+        ReservationResponse.ReservationResultDto reservationResult = storageService.makeReservationWithLuggageImage(
+                        storageId,
+                        new ReservationRequest.ReservationDto(reservationDto),
+                        luggageImages
+        );
 
         // 배송예약 & 배송 객체 생성
-        ReservationResponse.ReservationDto deliveryReservationResult = deliveryService.makeDeliveryReservation(reservationResult.getId(), new DeliveryRequest.ReservationDto(reservationDto));
+        ReservationResponse.ReservationDto deliveryReservationResult = deliveryService.makeDeliveryReservation(
+                reservationResult.getId(),
+                reservationDto
+        );
+
         return SuccessResponse.ok(deliveryReservationResult);
     }
 

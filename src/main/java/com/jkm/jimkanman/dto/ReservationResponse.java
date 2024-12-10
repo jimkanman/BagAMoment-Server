@@ -132,7 +132,7 @@ public class ReservationResponse {
     @NoArgsConstructor
     @Builder
     @AllArgsConstructor
-    @Schema(name = "LuggageDto (ReservationResponse)")
+    @Schema(name = "MultipartLuggageDto (ReservationResponse)")
     static public class LuggageDto {
         private LuggageType type;
         private String imagePath;
@@ -148,7 +148,7 @@ public class ReservationResponse {
             height = luggage.getHeight();
         }
 
-        public LuggageDto(ReservationRequest.LuggageDto luggageDto) {
+        public LuggageDto(ReservationRequest.MultipartLuggageDto luggageDto) {
             type = luggageDto.getType();
             imagePath = luggageDto.getImageFile().getName();
             width = luggageDto.getWidth();;

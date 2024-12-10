@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -46,10 +47,12 @@ public class StorageController {
     @PostMapping("/storages/{storageId}/reservations/new")
     public ResponseEntity<SuccessResponse<ReservationResponse.ReservationResultDto>> reserveStorageWithLuggageImage(
             @PathVariable("storageId") Long storageId,
-            @Valid @ModelAttribute ReservationRequest.ReservationWithLuggageImageDto reservationDto
+//            @Valid @ModelAttribute ReservationRequest.ReservationWithLuggageImageDto reservationDto
+            @Valid @RequestPart("data") ReservationRequest.ReservationDto reservationDto,
+            @RequestPart("files") List<MultipartFile> luggageImages
     ) {
         ReservationResponse.ReservationResultDto reservationResultDto
-                = storageService.makeReservationWithLuggageImage(storageId, reservationDto);
+                = storageService.makeReservationWithLuggageImage(storageId, reservationDto, luggageImages);
         return SuccessResponse.ok(reservationResultDto);
     }
 
