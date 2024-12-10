@@ -113,7 +113,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<StorageResponse.StorageDto> findAllByOwnerId(Long memberId) {
-        List<Storage> storages = storageRepository.findAllByOwnerId(memberId);
+        List<Storage> storages = storageRepository.findAllByOwnerIdOrderByCreatedAtDesc(memberId);
         return storages.stream()
                 .map(storage -> new StorageResponse.StorageDto(storage))
                 .toList();
@@ -121,7 +121,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<ReservationResponse.ReservationPreviewDto> findReservationsOnStoragesByOwnerId(Long memberId) {
-        List<StorageReservation> reservations = storageRepository.findAllReservationsByOwnerId(memberId);
+        List<StorageReservation> reservations = storageReservationRepository.findAllByStorageOwnerIdOrderByCreatedAtDesc(memberId);
         return reservations.stream()
                 .map(reservation -> {
                     if(reservation.getStorage().getStorageImages().isEmpty())

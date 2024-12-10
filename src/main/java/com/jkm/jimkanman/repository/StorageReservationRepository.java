@@ -16,8 +16,17 @@ public interface StorageReservationRepository extends JpaRepository<StorageReser
             "JOIN FETCH sr.member m " +
             "JOIN FETCH sr.storage s " +
             "LEFT JOIN FETCH s.storageImages " +
-            "WHERE m.id = :memberId")
+            "WHERE m.id = :memberId " +
+            "ORDER BY sr.createdAt ")
     List<StorageReservation> findAllByMemberId(Long memberId);
+
+    @Query("SELECT sr FROM StorageReservation sr " +
+            "JOIN FETCH sr.storage s " +
+            "JOIN FETCH s.owner o " +
+            "LEFT JOIN FETCH s.storageImages " +
+            "WHERE o.id = :ownerId "+
+            "ORDER BY sr.createdAt DESC")
+    List<StorageReservation> findAllByStorageOwnerIdOrderByCreatedAtDesc(Long ownerId);
 
     List<StorageReservation> findAllByStorageId(Long storageId);
 }
