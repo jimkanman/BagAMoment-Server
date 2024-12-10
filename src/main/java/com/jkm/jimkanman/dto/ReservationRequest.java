@@ -55,6 +55,7 @@ public class ReservationRequest {
     @NoArgsConstructor
     @Builder
     @AllArgsConstructor
+    @Schema(name = "LuggageDto (ReservationRequest)")
     static public class LuggageDto {
         private LuggageType type;
         private MultipartFile imageFile;

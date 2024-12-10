@@ -5,6 +5,7 @@ import com.jkm.jimkanman.domain.Luggage;
 import com.jkm.jimkanman.domain.StorageReservation;
 import com.jkm.jimkanman.domain.enums.LuggageType;
 import com.jkm.jimkanman.global.JimkanmanConstants;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 
 import java.util.List;
@@ -131,6 +132,7 @@ public class ReservationResponse {
     @NoArgsConstructor
     @Builder
     @AllArgsConstructor
+    @Schema(name = "LuggageDto (ReservationResponse)")
     static public class LuggageDto {
         private LuggageType type;
         private String imagePath;
