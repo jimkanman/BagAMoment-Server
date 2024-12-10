@@ -30,7 +30,7 @@ public class ReservationRequest {
 //        }
     }
 
-    @Getter
+    @Data
     @NoArgsConstructor
     @Builder
     @AllArgsConstructor

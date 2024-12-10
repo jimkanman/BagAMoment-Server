@@ -149,6 +149,18 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    public void setLuggageImage(Long reservationId, List<MultipartFile> luggageImages) {
+        StorageReservation reservation = storageReservationRepository.findById(reservationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
+        for(int idx = 0; idx < luggageImages.size(); idx++) {
+            String imagePath = fileService.saveFile(luggageImages.get(idx));
+            reservation.getLuggageList().get(idx).setImagePath(imagePath);
+        }
+
+        storageReservationRepository.save(reservation);
+    }
+
+    @Override
     @Transactional
     public StorageResponse.StorageDto save(StorageRequest.StorageRegisterDto registerDto) {
         // 보관소 옵션 파싱 (multipart이므로 List<String>이지만 따옴표와 대괄호가 그대로 실려옴)

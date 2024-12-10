@@ -40,4 +40,6 @@ public interface StorageService {
     List<ReservationResponse.ReservationPreviewDto> findReservationsOnStoragesByOwnerId(Long memberId);
 
     void changeStorageReservationStatus(Long reservationId, String status);
+
+    void setLuggageImage(Long reservationId, List<MultipartFile> luggageImages);
 }

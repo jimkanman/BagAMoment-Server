@@ -43,17 +43,14 @@ public class StorageController {
         return SuccessResponse.ok(reservationResultDto);
     }
 
-    @Operation(summary = "보관소 예약 (신) (짐 사진 포함)", description = "입력받은 정보로 보관소를 예약함 (짐 사진 포함)")
-    @PostMapping("/storages/{storageId}/reservations/new")
-    public ResponseEntity<SuccessResponse<ReservationResponse.ReservationResultDto>> reserveStorageWithLuggageImage(
-            @PathVariable("storageId") Long storageId,
-//            @Valid @ModelAttribute ReservationRequest.ReservationWithLuggageImageDto reservationDto
-            @Valid @RequestPart("data") ReservationRequest.ReservationDto reservationDto,
-            @RequestPart("files") List<MultipartFile> luggageImages
+    @Operation(summary = "예약에 대한 이미지 등록", description = "해당 id의 예약에 짐 이미지를 등록함")
+    @PostMapping("/reservations/{reservationId}/images")
+    public ResponseEntity<SuccessResponse<String>> reserveStorageWithLuggageImage(
+            @PathVariable("reservationId") Long reservationId,
+            @ModelAttribute List<MultipartFile> luggageImages
     ) {
-        ReservationResponse.ReservationResultDto reservationResultDto
-                = storageService.makeReservationWithLuggageImage(storageId, reservationDto, luggageImages);
-        return SuccessResponse.ok(reservationResultDto);
+        storageService.setLuggageImage(reservationId, luggageImages);
+        return SuccessResponse.ok("이미지 저장이 완료되었습니다.");
     }
 
     @Operation(summary = "보관소 예약 확인", description = "해당 id의 보관소에 걸린 모든 예약 목록을 가져옴")
