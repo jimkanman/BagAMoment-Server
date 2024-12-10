@@ -18,6 +18,9 @@ public class Luggage extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = true)
+    private String imagePath; // 이미지 경로
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id")
     private StorageReservation reservation;
