@@ -164,18 +164,21 @@ public class StorageServiceImpl implements StorageService {
     @Transactional
     public StorageResponse.StorageDto save(StorageRequest.StorageRegisterDto registerDto) {
         // 보관소 옵션 파싱 (multipart이므로 List<String>이지만 따옴표와 대괄호가 그대로 실려옴)
-        List<StorageOption> storageOptions = registerDto.getStorageOptions().stream()
-                .map(option -> option.replaceAll("[\"'\\[\\]]", "")) // 불필요한 문자 제거
-                .map(parsedOption -> {
-                    try {
-                        return StorageOption.valueOf(parsedOption); // StorageOption으로 변환
-                    } catch (IllegalArgumentException e) {
-                        System.err.println("Invalid storage option: " + parsedOption); // 로그 추가
-                        return null; // 잘못된 옵션은 null로 처리
-                    }
-                })
-                .filter(Objects::nonNull) // null 값 제거
-                .toList();
+        List<StorageOption> storageOptions = new ArrayList<>();
+        if(registerDto.getStorageOptions() != null) {
+            storageOptions = registerDto.getStorageOptions().stream()
+                    .map(option -> option.replaceAll("[\"'\\[\\]]", "")) // 불필요한 문자 제거
+                    .map(parsedOption -> {
+                        try {
+                            return StorageOption.valueOf(parsedOption); // StorageOption으로 변환
+                        } catch (IllegalArgumentException e) {
+                            System.err.println("Invalid storage option: " + parsedOption); // 로그 추가
+                            return null; // 잘못된 옵션은 null로 처리
+                        }
+                    })
+                    .filter(Objects::nonNull) // null 값 제거
+                    .toList();
+        }
 
         // 주소에서 위도와 경도를 얻어옴
         Coordinate coordinate;
