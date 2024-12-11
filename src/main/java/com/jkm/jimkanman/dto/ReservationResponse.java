@@ -47,7 +47,7 @@ public class ReservationResponse {
             if (reservation == null) return;
             id = reservation.getId();
 
-            storageId = reservation.getId();
+            storageId = reservation.getStorage().getId();
             storageName = reservation.getStorage().getName();
 
             if(reservation.getDeliveryReservation() != null) {
