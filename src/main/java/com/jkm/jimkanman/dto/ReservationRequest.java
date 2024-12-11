@@ -78,6 +78,13 @@ public class ReservationRequest {
 
     @Data
     @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LuggageImageDto {
+        private List<MultipartFile> luggageImages;
+    }
+
+    @Data
+    @NoArgsConstructor
     @Builder
     @AllArgsConstructor
     @Schema(name = "PlainLuggageDto (No Image)")
