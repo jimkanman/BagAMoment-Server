@@ -16,6 +16,7 @@ import java.util.Comparator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -113,7 +114,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<StorageResponse.StorageDto> findAllByOwnerId(Long memberId) {
-        List<Storage> storages = storageRepository.findAllByOwnerId(memberId);
+        List<Storage> storages = storageRepository.findAllByOwnerIdOrderByCreatedAtDesc(memberId);
         return storages.stream()
                 .map(storage -> new StorageResponse.StorageDto(storage))
                 .toList();
@@ -121,7 +122,7 @@ public class StorageServiceImpl implements StorageService {
 
     @Override
     public List<ReservationResponse.ReservationPreviewDto> findReservationsOnStoragesByOwnerId(Long memberId) {
-        List<StorageReservation> reservations = storageRepository.findAllReservationsByOwnerId(memberId);
+        List<StorageReservation> reservations = storageReservationRepository.findAllByStorageOwnerIdOrderByCreatedAtDesc(memberId);
         return reservations.stream()
                 .map(reservation -> {
                     if(reservation.getStorage().getStorageImages().isEmpty())
@@ -144,6 +145,18 @@ public class StorageServiceImpl implements StorageService {
             throw new BusinessException(ErrorCode.INVALID_STATUS_TRANSITION);
         }
         reservation.setStatus(next);
+        storageReservationRepository.save(reservation);
+    }
+
+    @Override
+    public void setLuggageImage(Long reservationId, List<MultipartFile> luggageImages) {
+        StorageReservation reservation = storageReservationRepository.findById(reservationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
+        for(int idx = 0; idx < luggageImages.size(); idx++) {
+            String imagePath = fileService.saveFile(luggageImages.get(idx));
+            reservation.getLuggageList().get(idx).setImagePath(imagePath);
+        }
+
         storageReservationRepository.save(reservation);
     }
 
@@ -239,6 +252,69 @@ public class StorageServiceImpl implements StorageService {
     }
 
     @Override
+    public ReservationResponse.ReservationResultDto makeReservationWithLuggageImage(
+            Long storageId,
+            ReservationRequest.ReservationDto reservationDto,
+            List<MultipartFile> luggageImages
+    ) {
+        Storage storage = storageRepository.findById(storageId).orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
+
+        // 예약 시간 확인
+        LocalDateTime startDateTime, endDateTime;
+        startDateTime = LocalDateTime.parse(reservationDto.getStartDateTime());
+        endDateTime = LocalDateTime.parse(reservationDto.getEndDateTime());
+        if(!isWithinReservationTime(startDateTime, storage.getOpeningTime(), storage.getClosingTime())
+                || !isWithinReservationTime(endDateTime, storage.getOpeningTime(), storage.getClosingTime())){
+            throw new BusinessException(ErrorCode.STORAGE_NOT_OPEN);
+        }
+
+        // 짐 dto 엔티티 변환 및 가격 계산
+        if(reservationDto.getLuggage() == null) throw new BusinessException(ErrorCode.LUGGAGE_NULL);
+        List<Luggage> luggages = new ArrayList<>();
+        for(int i = 0; i < luggageImages.size(); i++){
+            ReservationRequest.PlainLuggageDto luggageDto = reservationDto.getLuggage().get(i);
+            MultipartFile image = luggageImages.get(i);
+            Luggage luggage = Luggage.builder()
+                    .type(luggageDto.getType())
+                    .depth(luggageDto.getDepth())
+                    .width(luggageDto.getWidth())
+                    .imagePath(fileService.saveFile(image)) // 이미지 저장
+                    .height(luggageDto.getHeight())
+                    .build();
+            luggages.add(luggage);
+        }
+
+        int price = luggages.stream()
+                .map(luggage -> switch (luggage.getType()) {
+                    case BAG -> storage.getBackpackPricePerHour();
+                    case CARRIER -> storage.getCarrierPricePerHour();
+                    case MISCELLANEOUS_ITEM -> storage.getMiscellaneousItemPricePerHour();
+                    default -> 0;
+                })
+                .mapToInt(i -> i)
+                .sum();
+
+        // 예약 객체 생성
+        StorageReservation reservation = StorageReservation.builder()
+                .storage(storage)
+                .member(securityUtil.getMember())
+                .startDateTime(startDateTime)
+                .endDateTime(endDateTime)
+                .luggageList(new ArrayList<>())
+                .paymentAmount(price)
+                .status(StorageReservationStatus.PENDING) // 예약 상태 대기 중으로 초기화
+                .build();
+
+        luggages.forEach(luggage -> luggage.setReservation(reservation));
+
+        // 저장
+        StorageReservation savedReservation = storageReservationRepository.save(reservation);
+        luggageRepository.saveAll(luggages);
+
+        return new ReservationResponse.ReservationResultDto(savedReservation);
+    }
+
+    @Override
     public ReservationResponse.ReservationResultDto makeReservation(Long storageId, ReservationRequest.ReservationDto reservationDto) {
         Storage storage = storageRepository.findById(storageId).orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
 
@@ -261,7 +337,6 @@ public class StorageServiceImpl implements StorageService {
                         .height(luggageDto.getHeight())
                         .build())
                 .toList();
-
 
         int price = luggages.stream()
                             .map(luggage -> switch (luggage.getType()) {

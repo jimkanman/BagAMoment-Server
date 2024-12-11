@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -26,7 +27,9 @@ public class StorageController {
 
     @Operation(summary = "보관소 등록", description = "입력받은 정보로 보관소를 등록함")
     @PostMapping("/storages")
-    public ResponseEntity<SuccessResponse<StorageResponse.StorageDto>> saveStorage(@ModelAttribute StorageRequest.StorageRegisterDto registerDto) {
+    public ResponseEntity<SuccessResponse<StorageResponse.StorageDto>> saveStorage(
+            @ModelAttribute StorageRequest.StorageRegisterDto registerDto
+    ) {
         StorageResponse.StorageDto storageDto = storageService.save(registerDto);
         return SuccessResponse.ok(storageDto);
     }
@@ -34,9 +37,20 @@ public class StorageController {
     @Operation(summary = "보관소 예약", description = "입력받은 정보로 보관소를 예약함")
     @PostMapping("/storages/{storageId}/reservations")
     public ResponseEntity<SuccessResponse<ReservationResponse.ReservationResultDto>> reserveStorage(@PathVariable("storageId") Long storageId,
-                                 @Valid @RequestBody ReservationRequest.ReservationDto reservationDto) {
+             @Valid @RequestBody ReservationRequest.ReservationDto reservationDto
+    ) {
         ReservationResponse.ReservationResultDto reservationResultDto = storageService.makeReservation(storageId, reservationDto);
         return SuccessResponse.ok(reservationResultDto);
+    }
+
+    @Operation(summary = "예약에 대한 이미지 등록", description = "해당 id의 예약에 짐 이미지를 등록함")
+    @PostMapping("/reservations/{reservationId}/images")
+    public ResponseEntity<SuccessResponse<String>> reserveStorageWithLuggageImage(
+            @PathVariable("reservationId") Long reservationId,
+            @ModelAttribute List<MultipartFile> luggageImages
+    ) {
+        storageService.setLuggageImage(reservationId, luggageImages);
+        return SuccessResponse.ok("이미지 저장이 완료되었습니다.");
     }
 
     @Operation(summary = "보관소 예약 확인", description = "해당 id의 보관소에 걸린 모든 예약 목록을 가져옴")

@@ -2,10 +2,7 @@ package com.jkm.jimkanman.domain;
 
 import com.jkm.jimkanman.domain.enums.LuggageType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
@@ -17,6 +14,10 @@ public class Luggage extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Setter
+    @Column(nullable = true)
+    private String imagePath; // 이미지 경로
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reservation_id")

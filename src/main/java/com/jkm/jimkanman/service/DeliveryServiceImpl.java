@@ -41,6 +41,9 @@ public class DeliveryServiceImpl implements DeliveryService {
             coordinate = new Coordinate(0d, 0d);
         }
 
+        // endDateTime null 처리
+        if(reservationDto.getEndDateTime() == null) reservationDto.setEndDateTime(reservationDto.getDeliveryArrivalDateTime());
+
         // 배송 객체, 배송 예약 객체 생성 후 보관소 예약 객체와 관계 맺어 저장
         StorageReservation storageReservation = storageReservationRepository.findById(reservationId)
                 .orElseThrow(() -> {

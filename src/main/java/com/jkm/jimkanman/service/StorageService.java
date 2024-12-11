@@ -6,6 +6,8 @@ import com.jkm.jimkanman.dto.StorageRequest;
 import com.jkm.jimkanman.dto.StorageResponse;
 
 import com.jkm.jimkanman.dto.StorageResponse.StoragePreviewDto;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 
@@ -16,6 +18,8 @@ public interface StorageService {
     StorageResponse.StorageDto save(StorageRequest.StorageRegisterDto registerDto);
 
     StorageResponse.StorageDto findById(Long storageId);
+
+    ReservationResponse.ReservationResultDto makeReservationWithLuggageImage(Long storageId, ReservationRequest.ReservationDto reservationDto, List<MultipartFile> luggageImages);
 
     ReservationResponse.ReservationResultDto makeReservation(Long storageId, ReservationRequest.ReservationDto reservationDto);
 
@@ -36,4 +40,6 @@ public interface StorageService {
     List<ReservationResponse.ReservationPreviewDto> findReservationsOnStoragesByOwnerId(Long memberId);
 
     void changeStorageReservationStatus(Long reservationId, String status);
+
+    void setLuggageImage(Long reservationId, List<MultipartFile> luggageImages);
 }
