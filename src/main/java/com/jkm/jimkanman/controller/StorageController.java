@@ -47,9 +47,9 @@ public class StorageController {
     @PostMapping("/reservations/{reservationId}/images")
     public ResponseEntity<SuccessResponse<String>> reserveStorageWithLuggageImage(
             @PathVariable("reservationId") Long reservationId,
-            @ModelAttribute List<MultipartFile> luggageImages
+            @ModelAttribute ReservationRequest.LuggageImageDto luggageImages
     ) {
-        storageService.setLuggageImage(reservationId, luggageImages);
+        storageService.setLuggageImage(reservationId, luggageImages.getLuggageImages());
         return SuccessResponse.ok("이미지 저장이 완료되었습니다.");
     }
 
