@@ -42,13 +42,19 @@ public class ReservationResponse {
 
         private Integer paymentAmount;
         private String status;
+        private Long memberId;
+        private String memberNickname;
 
         public ReservationDto(StorageReservation reservation) {
             if (reservation == null) return;
             id = reservation.getId();
 
-            storageId = reservation.getId();
+            storageId = reservation.getStorage().getId();
             storageName = reservation.getStorage().getName();
+            if(reservation.getMember()!=null){
+                memberId=reservation.getMember().getId();
+                memberNickname=reservation.getMember().getNickname();
+            }
 
             if(reservation.getDeliveryReservation() != null) {
                 deliveryReservation = new DeliveryResponse.ReservationDto(reservation.getDeliveryReservation());
@@ -64,6 +70,7 @@ public class ReservationResponse {
             endDateTime = StringToDateTimeConverter.toDateString(reservation.getEndDateTime());
             paymentAmount = reservation.getPaymentAmount();
             status = reservation.getStatus().name().toLowerCase();
+
         }
     }
 
