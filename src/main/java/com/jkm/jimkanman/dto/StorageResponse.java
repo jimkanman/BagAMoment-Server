@@ -30,7 +30,7 @@ public class StorageResponse {
         private String previewImagePath;
         private String name;
         private List<String> storageOptions;
-        private Boolean hasDeliveryService;
+        private boolean hasDeliveryService;
 
         private String postalCode;
         private String detailedAddress;
@@ -46,7 +46,7 @@ public class StorageResponse {
             id = storage.getId();
             name = storage.getName();
             distance = distanceFromCurrentLocation;
-            hasDeliveryService = storage.getHasDeliveryService();
+            hasDeliveryService = storage.isHasDeliveryService();
             openingTime = storage.getOpeningTime();
             closingTime = storage.getClosingTime();
             this.isOpen = determineIsOpen(openingTime, closingTime);;
@@ -79,7 +79,7 @@ public class StorageResponse {
         private String phoneNumber;
         private String description;
         private String notice;
-        private Boolean hasDeliveryService;
+        private boolean hasDeliveryService;
 
         // 주소 관련
         private String postalCode; // 우편번호
@@ -111,7 +111,7 @@ public class StorageResponse {
             this.phoneNumber = storage.getPhoneNumber();
             this.description = storage.getDescription();
             this.notice = storage.getNotice();
-            this.hasDeliveryService = storage.getHasDeliveryService();
+            this.hasDeliveryService = storage.isHasDeliveryService();
 
             // 주소 관련
             this.postalCode = storage.getPostalCode();
@@ -163,7 +163,7 @@ public class StorageResponse {
         private String phoneNumber;
         private String description;
         private String notice;
-        private Boolean hasDeliveryService;
+        private boolean hasDeliveryService;
 
         // 주소 관련
         private String postalCode;
@@ -193,7 +193,7 @@ public class StorageResponse {
             this.phoneNumber = storage.getPhoneNumber();
             this.description = storage.getDescription();
             this.notice = storage.getNotice();
-            this.hasDeliveryService = storage.getHasDeliveryService();
+            this.hasDeliveryService = storage.isHasDeliveryService();
 
             // 주소 관련
             this.postalCode = storage.getPostalCode();

@@ -109,7 +109,7 @@ public class StorageServiceImpl implements StorageService {
     public boolean checkDeliveryService(Long storageId) {
         Storage storage = storageRepository.findById(storageId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.STORAGE_NOT_FOUND));
-        return storage.getHasDeliveryService();
+        return storage.isHasDeliveryService();
     }
 
     @Override
@@ -206,7 +206,7 @@ public class StorageServiceImpl implements StorageService {
                 .backpackPricePerHour(registerDto.getBackpackPricePerHour())
                 .carrierPricePerHour(registerDto.getCarrierPricePerHour())
                 .miscellaneousItemPricePerHour(registerDto.getMiscellaneousItemPricePerHour())
-                .hasDeliveryService(registerDto.getHasDeliveryService())
+                .hasDeliveryService(registerDto.isHasDeliveryService())
                 .termsAndConditions(termsAndConditionsFilePath)
                 .storageImages(new ArrayList<>())
                 .latitude(coordinate.getLatitude())
