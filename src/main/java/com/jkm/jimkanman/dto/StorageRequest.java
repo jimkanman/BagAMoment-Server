@@ -29,7 +29,7 @@ public class StorageRequest {
         @Pattern(regexp = "^(?:[01][0-9]|2[0-3]):[0-5][0-9]$", message = "올바른 시간 형식이 아닙니다.")
         private String closingTime;
 
-        private Boolean hasDeliveryService;
+        private boolean hasDeliveryService = false;
         private int backpackPricePerHour;
         private int carrierPricePerHour;
         private int miscellaneousItemPricePerHour;
